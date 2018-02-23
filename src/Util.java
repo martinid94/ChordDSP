@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Util{
 
-    public BigInteger hashAdress(InetSocketAddress address){
+    public static BigInteger hashAdress(InetSocketAddress address){
         BigInteger result = null;
         int h = address.hashCode();
 
@@ -35,16 +35,23 @@ public class Util{
         return result;
     }
 
-    public BigInteger hashFile(InetSocketAddress fileName){
+    public static BigInteger hashFile(InetSocketAddress fileName){
         return null;
     }
 
     public static void main(String[] args){
         try {
-            System.out.println(InetAddress.getLocalHost());
+            System.out.println(InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        //InetSocketAddress ad = new InetSocketAddress(new InetAddress())
+        InetSocketAddress ad = null;
+        try {
+            ad = new InetSocketAddress(InetAddress.getLocalHost(), 445);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(hashAdress(ad));
     }
 }
