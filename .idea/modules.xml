@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Chord/Chord.iml" filepath="$PROJECT_DIR$/Chord/Chord.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ChordDSP.iml" filepath="$PROJECT_DIR$/ChordDSP.iml" />
+    </modules>
+  </component>
+</project>
