@@ -32,21 +32,49 @@ public class Util{
             return -1;
         }
         byte[] b = {100};
-        byte[] base = {2};
-        BigInteger maxValue = (new BigInteger(base)).pow(m);
+        BigInteger maxValue = poweOfTwo(m);
         int percent = ((id.multiply(new BigInteger(b))).divide(maxValue)).intValue();
         return percent;
+    }
+
+    public static boolean belongsToOpenInterval(BigInteger id, BigInteger from, BigInteger to){
+        if(id == null || from == null || to == null){
+            throw new IllegalArgumentException();
+        }
+
+        if(from.compareTo(to) <= 0){ //from <= to
+            if(id.compareTo(from) > 0 && id.compareTo(to) < 0) { // id > from && id < to
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            byte[] p = {0};
+            BigInteger maxValue = poweOfTwo(m); //2^m
+            BigInteger minValue = new BigInteger(p);
+            if((id.compareTo(from) > 0 && id.compareTo(maxValue) < 0) ||
+                    (id.compareTo(minValue) >= 0 && id.compareTo(to) < 0)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static BigInteger ithStart(int i, BigInteger id){
         if(i > m || i <= 0 || id == null){
             return null;
         }
-        byte[] base = {2};
-        BigInteger value = (new BigInteger(base)).pow(i-1); //2^(i-1)
-        BigInteger maxValue = (new BigInteger(base)).pow(m);
+        BigInteger value = poweOfTwo(i-1); //2^(i-1)
+        BigInteger maxValue = poweOfTwo(m);
         return (id.add(value)).mod(maxValue);
 
+    }
+
+    public static BigInteger poweOfTwo(int i){
+        byte[] base = {2};
+        return (new BigInteger(base)).pow(i);
     }
 
     private static BigInteger hashSH1(int key){
@@ -74,6 +102,8 @@ public class Util{
 
         return result;
     }
+
+
 
 
 }

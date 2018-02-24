@@ -29,6 +29,7 @@ public class TestUtil {
         System.out.println(keyPosition(hashAdress(ad)));
         System.out.println(keyPosition(hashFile("prova.txt")));
         System.out.println("Test ithStart: " + testithStart());
+        System.out.println("Test belongsToOpenInterval: " + testbelongsToOpenInterval());
 
     }
 
@@ -37,5 +38,12 @@ public class TestUtil {
         byte[] base = {4};
         BigInteger id = new BigInteger(base);
         return ithStart(i, id);
+    }
+
+    private static boolean testbelongsToOpenInterval(){
+        BigInteger id = poweOfTwo(120);
+        BigInteger from = poweOfTwo(100);
+        BigInteger to = poweOfTwo(6);
+        return belongsToOpenInterval(id, from, to);
     }
 }
