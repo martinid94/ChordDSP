@@ -9,34 +9,51 @@ public class Util{
 
     public static final int m = 160;
 
+    /**
+     * @param address: node address
+     * @return id of the node
+     */
     public static BigInteger hashAdress(InetSocketAddress address){
         if(address == null){
             return null;
         }
         int h = address.hashCode();
-        return hashSH1(h);
+        return hashSHA1(h);
 
     }
 
+    /**
+     * @param fileName: file name
+     * @return id of the file
+     */
     public static BigInteger hashFile(String fileName){
         if(fileName == null){
             return null;
         }
         int h = fileName.hashCode();
-        return hashSH1(h);
+        return hashSHA1(h);
     }
 
-
+    /**
+     * @param id: id of a file or a node
+     * @return position of the id in the Chord ring
+     */
     public static int keyPosition(BigInteger id){
         if(id == null){
             return -1;
         }
         byte[] b = {100};
-        BigInteger maxValue = poweOfTwo(m);
+        BigInteger maxValue = powerOfTwo(m);
         int percent = ((id.multiply(new BigInteger(b))).divide(maxValue)).intValue();
         return percent;
     }
 
+    /**
+     * @param id: id of a file or a node
+     * @param from: beginning of the interval
+     * @param to: endo of the interval
+     * @return true if from < id < to
+     */
     public static boolean belongsToOpenInterval(BigInteger id, BigInteger from, BigInteger to){
         if(id == null || from == null || to == null){
             throw new IllegalArgumentException();
@@ -52,7 +69,7 @@ public class Util{
         }
         else{
             byte[] p = {0};
-            BigInteger maxValue = poweOfTwo(m); //2^m
+            BigInteger maxValue = powerOfTwo(m); //2^m
             BigInteger minValue = new BigInteger(p);
             if((id.compareTo(from) > 0 && id.compareTo(maxValue) < 0) ||
                     (id.compareTo(minValue) >= 0 && id.compareTo(to) < 0)){
@@ -62,22 +79,31 @@ public class Util{
         return false;
     }
 
+    /**
+     * @param id: id of a node
+     * @param i: position in the node's finger table
+     * @return finger[i].start's id
+     */
     public static BigInteger ithStart(int i, BigInteger id){
         if(i > m || i <= 0 || id == null){
             return null;
         }
-        BigInteger value = poweOfTwo(i-1); //2^(i-1)
-        BigInteger maxValue = poweOfTwo(m);
+        BigInteger value = powerOfTwo(i-1); //2^(i-1)
+        BigInteger maxValue = powerOfTwo(m);
         return (id.add(value)).mod(maxValue);
 
     }
 
-    public static BigInteger poweOfTwo(int i){
+    /**
+     * @param i: exponent
+     * @return 2^i
+     */
+    public static BigInteger powerOfTwo(int i){
         byte[] base = {2};
         return (new BigInteger(base)).pow(i);
     }
 
-    private static BigInteger hashSH1(int key){
+    private static BigInteger hashSHA1(int key){
         BigInteger result = null;
         byte[] hashbytes = new byte[4];
         hashbytes[0] = (byte) (key >> 24);

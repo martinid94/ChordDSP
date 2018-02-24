@@ -42,9 +42,9 @@ public class TestUtil {
     }
 
     private static boolean testbelongsToOpenInterval(){
-        BigInteger id = poweOfTwo(120);
-        BigInteger from = poweOfTwo(100);
-        BigInteger to = poweOfTwo(6);
+        BigInteger id = powerOfTwo(120);
+        BigInteger from = powerOfTwo(100);
+        BigInteger to = powerOfTwo(6);
         return belongsToOpenInterval(id, from, to);
     }
 }
