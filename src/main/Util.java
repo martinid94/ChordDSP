@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Util{
 
-    private static final int m = 160;
+    public static final int m = 160;
 
     public static BigInteger hashAdress(InetSocketAddress address){
         if(address == null){
