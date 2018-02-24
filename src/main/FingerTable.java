@@ -13,6 +13,11 @@ public class FingerTable {
         table = new InetSocketAddress[Util.m];
     }
 
+    /**
+     *
+     * @param i: index of the table to update
+     * @param node: node address to insert
+     */
     public synchronized void updateIthFinger(int i, InetSocketAddress node){
         if(i < 0 || i >= Util.m){
             throw new IllegalArgumentException();
@@ -20,6 +25,11 @@ public class FingerTable {
         table[i] = node;
     }
 
+    /**
+     *
+     * @param i: index of the table
+     * @return address node in the ith line of table
+     */
     public synchronized InetSocketAddress getIthFinger(int i){
         if(i < 0 || i >= Util.m){
             throw new IllegalArgumentException();
