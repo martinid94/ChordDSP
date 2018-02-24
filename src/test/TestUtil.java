@@ -1,5 +1,6 @@
 package test;
 
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -27,6 +28,14 @@ public class TestUtil {
         System.out.println(hashFile("prova.pdf"));
         System.out.println(keyPosition(hashAdress(ad)));
         System.out.println(keyPosition(hashFile("prova.txt")));
+        System.out.println("Test ithStart: " + testithStart());
 
+    }
+
+    private static BigInteger testithStart(){
+        int i = 3;
+        byte[] base = {4};
+        BigInteger id = new BigInteger(base);
+        return ithStart(i, id);
     }
 }
