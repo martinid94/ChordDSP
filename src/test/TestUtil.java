@@ -24,6 +24,7 @@ public class TestUtil {
             e.printStackTrace();
         }
 
+        System.out.println(ad);
         System.out.println(hashAdress(ad));
         System.out.println(hashFile("prova.pdf"));
         System.out.println(keyPosition(hashAdress(ad)));

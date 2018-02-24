@@ -13,15 +13,25 @@ public class FingerTable {
         table = new InetSocketAddress[Util.m];
     }
 
-    public void updateIthFinger(int i, InetSocketAddress node){
-
+    public synchronized void updateIthFinger(int i, InetSocketAddress node){
+        if(i < 0 || i >= Util.m){
+            throw new IllegalArgumentException();
+        }
+        table[i] = node;
     }
 
-    public InetSocketAddress getIthFinger(int i){
-        return null;
+    public synchronized InetSocketAddress getIthFinger(int i){
+        if(i < 0 || i >= Util.m){
+            throw new IllegalArgumentException();
+        }
+        return table[i];
     }
 
     public String toString(){
-        return null;
+        StringBuilder sb = new StringBuilder();
+        for(InetSocketAddress ad : table){
+            sb.append(ad.toString());
+        }
+        return sb.toString();
     }
 }
