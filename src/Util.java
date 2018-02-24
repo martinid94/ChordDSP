@@ -8,14 +8,23 @@ import java.security.NoSuchAlgorithmException;
 public class Util{
 
     public static BigInteger hashAdress(InetSocketAddress address){
-        BigInteger result = null;
         int h = address.hashCode();
+        return hashSH1(h);
 
+    }
+
+    public static BigInteger hashFile(String fileName){
+        int h = fileName.hashCode();
+        return hashSH1(h);
+    }
+
+    private static BigInteger hashSH1(int key){
+        BigInteger result = null;
         byte[] hashbytes = new byte[4];
-        hashbytes[0] = (byte) (h >> 24);
-        hashbytes[1] = (byte) (h >> 16);
-        hashbytes[2] = (byte) (h >> 8);
-        hashbytes[3] = (byte) (h );
+        hashbytes[0] = (byte) (key >> 24);
+        hashbytes[1] = (byte) (key >> 16);
+        hashbytes[2] = (byte) (key >> 8);
+        hashbytes[3] = (byte) (key );
 
         // try to create SHA1 digest
         MessageDigest md =  null;
@@ -29,14 +38,10 @@ public class Util{
         if(md != null){
             md.reset();
             md.update(hashbytes);
-            result = new BigInteger(md.digest());
+            result = new BigInteger(1, md.digest());
         }
 
         return result;
-    }
-
-    public static BigInteger hashFile(InetSocketAddress fileName){
-        return null;
     }
 
     public static void main(String[] args){
@@ -47,11 +52,12 @@ public class Util{
         }
         InetSocketAddress ad = null;
         try {
-            ad = new InetSocketAddress(InetAddress.getLocalHost(), 445);
+            ad = new InetSocketAddress(InetAddress.getLocalHost(), 720);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 
         System.out.println(hashAdress(ad));
+        System.out.println(hashFile("prova.txt"));
     }
 }
