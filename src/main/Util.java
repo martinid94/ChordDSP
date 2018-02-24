@@ -1,3 +1,5 @@
+package main;
+
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -20,12 +22,12 @@ public class Util{
         return hashSH1(h);
     }
 
-    public static String keyPosition(BigInteger id){
+    public static int keyPosition(BigInteger id){
         byte[] b = {100};
         byte[] base = {2};
         BigInteger maxValue = (new BigInteger(base)).pow(m);
         int percent = ((id.multiply(new BigInteger(b))).divide(maxValue)).intValue();
-        return Integer.toString(percent);
+        return percent;
     }
 
     private static BigInteger hashSH1(int key){
@@ -55,24 +57,4 @@ public class Util{
     }
 
 
-
-    public static void main(String[] args){
-        try {
-            System.out.println(InetAddress.getLocalHost().getHostAddress());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        InetSocketAddress ad = null;
-        try {
-            ad = new InetSocketAddress(InetAddress.getLocalHost(), 720);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(hashAdress(ad));
-        System.out.println(hashFile("prova.pdf"));
-        System.out.println(keyPosition(hashAdress(ad)));
-        System.out.println(keyPosition(hashFile("prova.pdf")));
-
-    }
 }
