@@ -7,6 +7,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class Util{
 
+    private static final int m = 160;
+
     public static BigInteger hashAdress(InetSocketAddress address){
         int h = address.hashCode();
         return hashSH1(h);
@@ -16,6 +18,14 @@ public class Util{
     public static BigInteger hashFile(String fileName){
         int h = fileName.hashCode();
         return hashSH1(h);
+    }
+
+    public static String keyPosition(BigInteger id){
+        byte[] b = {100};
+        byte[] base = {2};
+        BigInteger maxValue = (new BigInteger(base)).pow(m);
+        int percent = ((id.multiply(new BigInteger(b))).divide(maxValue)).intValue();
+        return Integer.toString(percent);
     }
 
     private static BigInteger hashSH1(int key){
@@ -44,6 +54,8 @@ public class Util{
         return result;
     }
 
+
+
     public static void main(String[] args){
         try {
             System.out.println(InetAddress.getLocalHost().getHostAddress());
@@ -58,6 +70,9 @@ public class Util{
         }
 
         System.out.println(hashAdress(ad));
-        System.out.println(hashFile("prova.txt"));
+        System.out.println(hashFile("prova.pdf"));
+        System.out.println(keyPosition(hashAdress(ad)));
+        System.out.println(keyPosition(hashFile("prova.pdf")));
+
     }
 }
