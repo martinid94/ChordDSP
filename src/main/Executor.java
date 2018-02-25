@@ -44,8 +44,14 @@ public class Executor extends Thread{
             switch (request){
                 case "FIND_SUCC":
                     findSuccessor();
-                case "JOIN_REQ":
+                case "JOIN":
                     joinRequest();
+                case "GET_SUCC":
+                    getSuccessor();
+                case "GET_PRED":
+                    getPredecessor();
+                case "GET&SET_JA":
+                    getAndSetAvailability();
                 case "SET_SUCC":
                     setSuccessor();
                 case "SET_PRED":
@@ -92,21 +98,62 @@ public class Executor extends Thread{
         if(newPred == null || !node.getAndSetJoinAvailable(false)){
             //respond with message error
             oos.writeObject(null);
+            oos.flush();
             return;
         }
-
-        //TODO quando joinAvailable viene settata a true????
 
         oos.writeObject(node.getPredAddress());
         oos.flush();
         node.setPredecessor(newPred);
     }
 
-    private void setSuccessor(){
+    private void getSuccessor() throws IOException {
 
+        oos.writeObject(node.getSuccAddress());
+        oos.flush();
     }
 
-    private void setPredecessor(){
+    private void getPredecessor() throws IOException {
+
+        oos.writeObject(node.getPredAddress());
+        oos.flush();
+    }
+
+    private void getAndSetAvailability() throws IOException, ClassNotFoundException {
+
+        boolean valueAvailable = (boolean) ois.readObject();
+
+        oos.writeBoolean(node.getAndSetJoinAvailable(valueAvailable));
+        oos.flush();
+    }
+
+    private void setSuccessor() throws IOException, ClassNotFoundException {
+        InetSocketAddress newSucc = (InetSocketAddress) ois.readObject();
+
+        if(newSucc == null){
+            //respond with false
+            oos.writeBoolean(false);
+            oos.flush();
+            return;
+        }
+
+        oos.writeBoolean(node.setSuccessor(newSucc));
+        oos.flush();
+    }
+
+    private void setPredecessor() throws IOException, ClassNotFoundException {
+
+        InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
+
+        if(newPred == null || !node.getAndSetJoinAvailable(false)){
+            //respond with false
+            oos.writeBoolean(false);
+            oos.flush();
+            return;
+        }
+
+        oos.writeBoolean(node.setPredecessor(newPred));
+        oos.flush();
 
     }
 

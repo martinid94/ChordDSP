@@ -2,6 +2,7 @@ package main;
 
 import main.Connection.RingConnection;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,7 +50,14 @@ public class Node {
         joinAvailable.set(false);
 
         RingConnection rc = new RingConnection(bootstrapNode);
-        InetSocketAddress mySucc = rc.bootstapRequest(localId);
+        InetSocketAddress mySucc = null;
+
+        try {
+            mySucc = rc.bootstapRequest(localId);
+        } catch (IOException | ClassNotFoundException ei) {
+            return false;
+        }
+
 
         //error in bootstapRequest
         if(mySucc == null){
@@ -57,7 +65,12 @@ public class Node {
         }
 
         rc = new RingConnection(mySucc);
-        InetSocketAddress myPred = rc.joinRequest(localAddress);
+        InetSocketAddress myPred = null;
+        try {
+            myPred = rc.joinRequest(localAddress);
+        } catch (IOException | ClassNotFoundException ei) {
+            return false;
+        }
 
         //myPred == null if there is an error (join is not available)
         if(myPred == null){
@@ -110,12 +123,21 @@ public class Node {
         return true;
     }
 
+    public boolean setSuccessor(InetSocketAddress newSucc){
+        fTable.updateIthFinger(0, newSucc);
+        return true;
+    }
+
     /**
      *
      * @return
      */
     public InetSocketAddress getPredAddress() {
         return predAddress;
+    }
+
+    public InetSocketAddress getSuccAddress(){
+        return fTable.getIthFinger(0);
     }
 
     public FingerTable getfTable() {
