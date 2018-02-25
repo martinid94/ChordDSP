@@ -98,6 +98,7 @@ public class Executor extends Thread{
         //TODO quando joinAvailable viene settata a true????
 
         oos.writeObject(node.getPredAddress());
+        oos.flush();
         node.setPredecessor(newPred);
     }
 
