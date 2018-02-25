@@ -50,4 +50,7 @@ public class RingConnection extends Connection {
     }
 
 
+    public InetSocketAddress joinRequest(InetSocketAddress myself){
+        return null;
+    }
 }
