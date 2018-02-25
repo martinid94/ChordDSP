@@ -44,6 +44,12 @@ public class Executor extends Thread{
             switch (request){
                 case "FIND_SUCC":
                     findSuccessor();
+                case "JOIN_REQ":
+                    joinRequest();
+                case "SET_SUCC":
+                    setSuccessor();
+                case "SET_PRED":
+                    setPredecessor();
             }
 
 
@@ -78,4 +84,29 @@ public class Executor extends Thread{
         oos.writeObject(successor);
         oos.flush();
     }
+
+    private void joinRequest() throws IOException, ClassNotFoundException {
+
+        InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
+
+        if(newPred == null || !node.getAndSetJoinAvailable(false)){
+            //respond with message error
+            oos.writeObject(null);
+            return;
+        }
+
+        //TODO quando joinAvailable viene settata a true????
+
+        oos.writeObject(node.getPredAddress());
+        node.setPredecessor(newPred);
+    }
+
+    private void setSuccessor(){
+
+    }
+
+    private void setPredecessor(){
+
+    }
+
 }
