@@ -5,6 +5,7 @@ import main.Listener;
 import main.Node;
 import main.Util;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -39,8 +40,13 @@ public class TestConnection extends Thread{
         t2.start();
     }
 
-    public void run(){
+    public void run() {
         RingConnection rc = new RingConnection(serverAddress);
-        System.out.println(rc.bootstapRequest(Util.powerOfTwo(3)));
+        try{
+            System.out.println(rc.bootstapRequest(Util.powerOfTwo(3)));
+        }
+        catch (IOException | ClassNotFoundException ioe) {
+            ioe.printStackTrace();
+        }
     }
 }

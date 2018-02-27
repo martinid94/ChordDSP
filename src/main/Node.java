@@ -2,9 +2,13 @@ package main;
 
 import main.Connection.RingConnection;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -18,6 +22,7 @@ public class Node {
     private InetSocketAddress predAddress;
     private FingerTable fTable;
     private Listener listener;
+    private ConcurrentHashMap<String, FileManager> files;
     //file manager da inserire
     //eventuali altri thread
 
@@ -33,6 +38,7 @@ public class Node {
         joinAvailable = new AtomicBoolean();
         predAddress = null;
         listener = new Listener(this);
+        files = new ConcurrentHashMap<>();
     }
 
 
@@ -95,6 +101,31 @@ public class Node {
 
         return false;
     }
+
+    public boolean insert(Socket s, InetSocketAddress pred, String fileName) {
+        return true;
+    }
+
+    public boolean delete(InetSocketAddress succ, String fileName) {
+        return true;
+    }
+
+    public File get(Socket s, String fileName) {
+        return null;
+    }
+
+    public ArrayList<String> getFilesInterval(BigInteger from, BigInteger to) {
+        return null;
+    }
+
+    public boolean insertReplica(Socket s, String fileName) {
+        return true;
+    }
+
+    public boolean deleteReplica(String fileName) {
+        return true;
+    }
+
     /**
      * @return id of the node
      */
