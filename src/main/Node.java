@@ -102,16 +102,50 @@ public class Node {
         return false;
     }
 
-    public boolean insert(Socket s, InetSocketAddress pred, String fileName) {
-        return true;
+    public boolean insertFile(Socket s, InetSocketAddress pred, String fileName) {
+        if(s == null || pred == null || fileName == null || fileName.equals("")){
+            return false;
+        }
+
+        FileManager fm =files.get(fileName);
+        if(fm == null){
+            fm = new FileManager(fileName);
+        }
+        boolean value = fm.write(s, pred);
+
+        if(value){
+            files.put(fileName, fm);
+        }
+        return value;
     }
 
-    public boolean delete(InetSocketAddress succ, String fileName) {
-        return true;
+    public boolean delete(InetSocketAddress pred, String fileName) {
+        if(pred == null || fileName == null || fileName.equals("")){
+            return false;
+        }
+
+        FileManager fm = files.get(fileName);
+        if(fm == null){
+            return false;
+        }
+        boolean value = fm.remove(pred);
+        if(value){
+            files.remove(fileName);
+        }
+        return value;
     }
 
-    public File get(Socket s, String fileName) {
-        return null;
+    public boolean get(Socket s, String fileName) {
+        if(s == null || fileName == null || fileName.equals("")){
+            return false;
+        }
+
+        FileManager fm = files.get(fileName);
+        if(fm == null){
+            return false;
+        }
+
+        return fm.read(s);
     }
 
     public ArrayList<String> getFilesInterval(BigInteger from, BigInteger to) {

@@ -25,50 +25,24 @@ public class FileManager extends File {
     }
 
     public boolean write(Socket s, InetSocketAddress pred) {
-        writeLock.lock();
-        try {
-            InputStream is = s.getInputStream();
-            byte[] buffer = new byte[1024];
-            FileOutputStream fos = new FileOutputStream(this);
-            BufferedInputStream bis = new BufferedInputStream(is);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            int readBytes = 0;
-            while ((readBytes = bis.read(buffer)) != -1)
-                bos.write(buffer, 0, readBytes); //controlla se all'ultima iterazione ho lasciato un pezzo nel buffer
-            fos.close();
-            bis.close();
-            bos.close();
-            is.close();
-            writeLock.unlock();
+        boolean value = singleWrite(s);
+        if(value){
+            //TODO value = FileConnection.sendFileReplicaRequest(pred, “INSERT”, fileName)
         }
-        catch(IOException ioe) {
-            writeLock.unlock();
-            return false;
-
-        }
-        return true;
+        return value;
     }
 
-    public boolean delete(InetSocketAddress succ, String fileName) {
+    public boolean remove(InetSocketAddress pred) {
+
+        //TODO FileConnection.sendFileReplicaRequest(pred, “REMOVE_REPLICA”, filename”)
+        boolean value = singleRemove();
         return true;
     }
 
     public boolean read(Socket s) {
         readLock.lock();
         try {
-            OutputStream os = s.getOutputStream();
-            byte[] buffer = new byte[1024];
-            FileInputStream fis = new FileInputStream(this);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            BufferedOutputStream bos = new BufferedOutputStream(os);
-            int readBytes = 0;
-            while ((readBytes = bis.read(buffer)) != -1)
-                bos.write(buffer, 0, readBytes); //controlla se all'ultima iterazione ho lasciato un pezzo nel buffer
-            bos.flush();
-            fis.close();
-            bis.close();
-            bos.close();
-            os.close();
+            readManager(s);
             readLock.unlock();
         }
         catch(IOException ioe) {
@@ -79,15 +53,60 @@ public class FileManager extends File {
         return true;
     }
 
-    public ArrayList<String> getFilesInterval(BigInteger from, BigInteger to) {
-        return null;
-    }
 
-    public boolean insertReplica(Socket s, String fileName) {
+    public boolean singleWrite(Socket s) {
+        writeLock.lock();
+
+        try {
+            writeManager(s);
+            writeLock.unlock();
+        }
+        catch(IOException ioe) {
+            writeLock.unlock();
+            return false;
+
+        }
         return true;
     }
 
-    public boolean deleteReplica(String fileName) {
-        return true;
+    public boolean singleRemove() {
+        writeLock.lock();
+        boolean value = this.delete();
+        writeLock.unlock();
+        return value;
+    }
+
+    private void writeManager(Socket s) throws IOException {
+        InputStream is = s.getInputStream();
+        byte[] buffer = new byte[1024];
+        FileOutputStream fos = new FileOutputStream(this);
+        BufferedInputStream bis = new BufferedInputStream(is);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        int readBytes = 0;
+        while ((readBytes = bis.read(buffer)) != -1)
+            bos.write(buffer, 0, readBytes);
+        bos.flush();
+        bos.close();
+
+        bis.close();
+        fos.close();
+        is.close();
+    }
+
+    private void readManager(Socket s) throws IOException {
+        OutputStream os = s.getOutputStream();
+        byte[] buffer = new byte[1024];
+        FileInputStream fis = new FileInputStream(this);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        BufferedOutputStream bos = new BufferedOutputStream(os);
+        int readBytes = 0;
+        while ((readBytes = bis.read(buffer)) != -1)
+            bos.write(buffer, 0, readBytes);
+        bos.flush();
+        bos.close();
+
+        fis.close();
+        bis.close();
+        os.close();
     }
 }
