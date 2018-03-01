@@ -80,6 +80,17 @@ public class Util{
     }
 
     /**
+     * @param id: id of a file or a node
+     * @param from: beginning of the interval
+     * @param to: endo of the interval
+     * @return true if from < id <= to
+     */
+    public static boolean belongsToInterval(BigInteger id, BigInteger from, BigInteger to){
+        boolean value = belongsToOpenInterval(id, from, to);
+        return (value || id == to);
+    }
+
+    /**
      * @param id: id of a node
      * @param i: position in the node's finger table
      * @return finger[i].start's id

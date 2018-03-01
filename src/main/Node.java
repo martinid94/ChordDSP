@@ -102,6 +102,33 @@ public class Node {
         return false;
     }
 
+    public InetSocketAddress findSuccessor(BigInteger id){
+
+        InetSocketAddress successor = fTable.getIthFinger(0);
+
+        if(Util.belongsToInterval(id, localId, Util.hashAdress(successor))){
+            return successor;
+        }
+        //TODO
+        return null;
+    }
+
+    public InetSocketAddress closestPrecedingNode(BigInteger id){
+
+        for(int i = Util.m - 1; i >= 0; i--){
+            InetSocketAddress ith = fTable.getIthFinger(i);
+
+            if(ith == null){
+                continue;
+            }
+
+            //if(ith.getAddress().isReachable(1000)){
+
+            //}
+        }
+        return null;
+    }
+
     public boolean insertFile(Socket s, InetSocketAddress pred, String fileName) {
         if(s == null || pred == null || fileName == null || fileName.equals("")){
             return false;
@@ -149,15 +176,48 @@ public class Node {
     }
 
     public ArrayList<String> getFilesInterval(BigInteger from, BigInteger to) {
-        return null;
+        ArrayList<String> result = new ArrayList<>();
+
+        for(String s : files.keySet()){
+            if(Util.belongsToInterval(Util.hashFile(s), from, to)){
+                result.add(s);
+            }
+        }
+        return result;
     }
 
-    public boolean insertReplica(Socket s, String fileName) {
-        return true;
+    public boolean singleInsert(Socket s, String fileName) {
+        if(s == null || fileName == null || fileName.equals("")){
+            return false;
+        }
+
+        FileManager fm =files.get(fileName);
+        if(fm == null){
+            fm = new FileManager(fileName);
+        }
+        boolean value = fm.singleWrite(s);
+
+        if(value){
+            files.put(fileName, fm);
+        }
+
+        return value;
     }
 
-    public boolean deleteReplica(String fileName) {
-        return true;
+    public boolean singleDelete(String fileName) {
+        if(fileName == null || fileName.equals("")){
+            return false;
+        }
+
+        FileManager fm = files.get(fileName);
+        if(fm == null){
+            return false;
+        }
+        boolean value = fm.singleRemove();
+        if(value){
+            files.remove(fileName);
+        }
+        return value;
     }
 
     /**
@@ -171,14 +231,17 @@ public class Node {
      * @return address (ip and port) of the node
      */
     public InetSocketAddress getLocalAddress() {
+
         return localAddress;
     }
 
     public boolean isJoinAvailable() {
+
         return joinAvailable.get();
     }
 
     public  boolean getAndSetJoinAvailable(boolean value){
+
         return joinAvailable.getAndSet(value);
     }
 
