@@ -37,6 +37,14 @@ public class FingerTable {
         return table[i];
     }
 
+    public void deleteNode(InetSocketAddress addr) {
+        for (int i = Util.m -1; i >= 0; i--) {
+            InetSocketAddress ithfinger = this.getIthFinger(i);
+            if (ithfinger != null && ithfinger.equals(addr))
+                updateIthFinger(i, null);
+        }
+    }
+
     public String toString(){
         StringBuilder sb = new StringBuilder();
         for(InetSocketAddress ad : table){

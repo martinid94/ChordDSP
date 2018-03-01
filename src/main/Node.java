@@ -104,12 +104,25 @@ public class Node {
 
     public InetSocketAddress findSuccessor(BigInteger id){
 
-        InetSocketAddress successor = fTable.getIthFinger(0);
 
-        if(Util.belongsToInterval(id, localId, Util.hashAdress(successor))){
-            return successor;
+        InetSocketAddress predessor = findPredecessor(id);
+
+        RingConnection rg = new RingConnection(predessor);
+
+        InetSocketAddress ret = null;
+        try {
+            ret = rg.addressRequest("GET_SUCC");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            return null;
         }
-        //TODO
+
+        return ret;
+    }
+
+    public InetSocketAddress findPredecessor(BigInteger id){
+
         return null;
     }
 
@@ -122,11 +135,25 @@ public class Node {
                 continue;
             }
 
-            //if(ith.getAddress().isReachable(1000)){
+            if(Util.belongsToOpenInterval(Util.hashAdress(ith), localId, id)){
+                boolean value = false;
 
-            //}
+                try {
+                    value = ith.getAddress().isReachable(1000);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if(value){
+                    return ith;
+                }
+                else{
+                    fTable.deleteNode(ith);
+                }
+            }
+
         }
-        return null;
+        return localAddress;
     }
 
     public boolean insertFile(Socket s, InetSocketAddress pred, String fileName) {
