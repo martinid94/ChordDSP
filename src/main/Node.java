@@ -1,5 +1,6 @@
 package main;
 
+import main.Connection.FileConnection;
 import main.Connection.RingConnection;
 
 import java.io.File;
@@ -156,8 +157,8 @@ public class Node {
         return localAddress;
     }
 
-    public boolean insertFile(Socket s, InetSocketAddress pred, String fileName) {
-        if(s == null || pred == null || fileName == null || fileName.equals("")){
+    public boolean insertFile(Socket s, String fileName) {
+        if(s == null || fileName == null || fileName.equals("")){
             return false;
         }
 
@@ -165,16 +166,23 @@ public class Node {
         if(fm == null){
             fm = new FileManager(fileName);
         }
-        boolean value = fm.write(s, pred);
+        boolean value = fm.write(s);
 
         if(value){
+            FileConnection fc = new FileConnection(this, predAddress);
+            try{
+                fc.insertFileRequest(fileName, true);
+            }
+            catch(IOException | ClassNotFoundException exc) {
+                //TODO what should we do here?
+            }
             files.put(fileName, fm);
         }
         return value;
     }
 
-    public boolean delete(InetSocketAddress pred, String fileName) {
-        if(pred == null || fileName == null || fileName.equals("")){
+    public boolean delete(String fileName) {
+        if(fileName == null || fileName.equals("")){
             return false;
         }
 
@@ -182,7 +190,17 @@ public class Node {
         if(fm == null){
             return false;
         }
-        boolean value = fm.remove(pred);
+
+        FileConnection fc = new FileConnection(this, predAddress);
+        //TODO what if away removal works but local does not?
+        try {
+            fc.deleteFileRequest(fileName, true);
+        }
+        catch (IOException | ClassNotFoundException exc) {
+            return false;
+        }
+
+        boolean value = fm.remove();
         if(value){
             files.remove(fileName);
         }
@@ -222,7 +240,7 @@ public class Node {
         if(fm == null){
             fm = new FileManager(fileName);
         }
-        boolean value = fm.singleWrite(s);
+        boolean value = fm.write(s);
 
         if(value){
             files.put(fileName, fm);
@@ -240,7 +258,7 @@ public class Node {
         if(fm == null){
             return false;
         }
-        boolean value = fm.singleRemove();
+        boolean value = fm.remove();
         if(value){
             files.remove(fileName);
         }

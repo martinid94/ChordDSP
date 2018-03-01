@@ -24,21 +24,6 @@ public class FileManager extends File {
         writeLock = rwl.writeLock();
     }
 
-    public boolean write(Socket s, InetSocketAddress pred) {
-        boolean value = singleWrite(s);
-        if(value){
-            //TODO value = FileConnection.sendFileReplicaRequest(pred, “INSERT”, fileName)
-        }
-        return value;
-    }
-
-    public boolean remove(InetSocketAddress pred) {
-
-        //TODO FileConnection.sendFileReplicaRequest(pred, “REMOVE_REPLICA”, filename”)
-        boolean value = singleRemove();
-        return true;
-    }
-
     public boolean read(Socket s) {
         readLock.lock();
         try {
@@ -54,7 +39,7 @@ public class FileManager extends File {
     }
 
 
-    public boolean singleWrite(Socket s) {
+    public boolean write(Socket s) {
         writeLock.lock();
 
         try {
@@ -69,7 +54,7 @@ public class FileManager extends File {
         return true;
     }
 
-    public boolean singleRemove() {
+    public boolean remove() {
         writeLock.lock();
         boolean value = this.delete();
         writeLock.unlock();

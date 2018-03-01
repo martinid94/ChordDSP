@@ -10,6 +10,7 @@ import java.net.Socket;
  * Created by Davide on 24/02/2018.
  */
 public abstract class Connection {
+
     protected InetSocketAddress nodeAddress;
     protected Socket s;
     protected ObjectOutputStream oos;
@@ -20,6 +21,14 @@ public abstract class Connection {
         s = null;
         oos = null;
         ois = null;
+    }
+
+    public InetSocketAddress getNodeAddress() {
+        return nodeAddress;
+    }
+
+    public void setNodeAddress(InetSocketAddress nodeAddress) {
+        this.nodeAddress = nodeAddress;
     }
 
     /**
