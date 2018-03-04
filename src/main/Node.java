@@ -169,14 +169,22 @@ public class Node {
         boolean value = fm.write(s);
 
         if(value){
+            files.put(fileName, fm);
+
             FileConnection fc = new FileConnection(this, predAddress);
             try{
-                fc.insertFileRequest(fileName, true);
+                if(!fc.insertFileRequest(fileName, true)){
+                    fc.insertFileRequest(fileName, true);
+                }
             }
             catch(IOException | ClassNotFoundException exc) {
-                //TODO what should we do here?
+                try {
+                    fc = new FileConnection(this, predAddress);
+                    fc.insertFileRequest(fileName, true);
+                } catch (IOException | ClassNotFoundException e) {
+                    return true;
+                }
             }
-            files.put(fileName, fm);
         }
         return value;
     }
@@ -191,19 +199,54 @@ public class Node {
             return false;
         }
 
-        FileConnection fc = new FileConnection(this, predAddress);
-        //TODO what if away removal works but local does not?
+        files.remove(fileName);
+        boolean value = fm.remove();
+
+        InetSocketAddress pred = predAddress;
+        RingConnection rc = new RingConnection(pred);
+        FileConnection fc = new FileConnection(this, pred);
         try {
-            fc.deleteFileRequest(fileName, true);
+            if(fc.hasFileRequest(fileName)){
+                fc.deleteFileRequest(fileName, true);
+            }
         }
         catch (IOException | ClassNotFoundException exc) {
-            return false;
+            try {
+                if(fc.hasFileRequest(fileName)){
+                    fc.deleteFileRequest(fileName, true);
+                }
+            } catch (IOException | ClassNotFoundException e) {}
         }
 
-        boolean value = fm.remove();
-        if(value){
-            files.remove(fileName);
+        InetSocketAddress predPred = null;
+        try {
+            predPred = rc.addressRequest("GET_PRED");
+        } catch (IOException | ClassNotFoundException e) {
+            return value;
         }
+
+        if(predPred == null){
+            return value;
+        }
+
+        fc = new FileConnection(this, predPred);
+        try {
+            if(fc.hasFileRequest(fileName)){
+                fc.deleteFileRequest(fileName, true);
+            }
+        }
+        catch (IOException | ClassNotFoundException exc) {
+            try {
+                if(fc.hasFileRequest(fileName)){
+                    fc.deleteFileRequest(fileName, true);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                return value;
+            }
+            return value;
+        }
+
+
         return value;
     }
 
@@ -218,6 +261,13 @@ public class Node {
         }
 
         return fm.read(s);
+    }
+
+    public boolean hasFile(String fileName){
+        if(fileName == null || fileName.equals("")){
+            return false;
+        }
+        return files.containsKey(fileName);
     }
 
     public ArrayList<String> getFilesInterval(BigInteger from, BigInteger to) {
@@ -305,7 +355,7 @@ public class Node {
      *
      * @return
      */
-    public InetSocketAddress getPredAddress() {
+    public synchronized InetSocketAddress getPredAddress() {
         return predAddress;
     }
 

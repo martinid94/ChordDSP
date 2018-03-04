@@ -15,7 +15,7 @@ public class FileConnection  extends Connection{
     private Node localNode;
     private RingConnection rc;
 
-    public FileConnection(Node n, InetSocketAddress nodeAd) {
+    public FileConnection(Node n, InetSocketAddress nodeAd){
         super(nodeAd);
         localNode = n;
         rc = new RingConnection(nodeAd);
@@ -81,7 +81,7 @@ public class FileConnection  extends Connection{
 
     public boolean deleteFileRequest(String fileName, boolean replica) throws IOException, ClassNotFoundException {
         if(fileName == null || fileName.equals(""))
-            throw new IllegalArgumentException("Invalid argument");
+            return false;
 
         startConnection();
         if(!replica)
@@ -94,5 +94,19 @@ public class FileConnection  extends Connection{
         boolean retVal = ois.readBoolean();
         closeConnection();
         return retVal;
+    }
+
+    public boolean hasFileRequest(String fileName) throws IOException {
+        if(fileName == null || fileName.equals(""))
+           return false;
+
+        startConnection();
+        oos.writeObject("HAS_FILE");
+        oos.writeObject(fileName);
+        oos.flush();
+
+        boolean result = ois.readBoolean();
+        closeConnection();
+        return result;
     }
 }

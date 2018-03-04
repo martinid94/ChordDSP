@@ -26,32 +26,17 @@ public class FileManager extends File {
 
     public boolean read(Socket s) {
         readLock.lock();
-        try {
-            readManager(s);
-            readLock.unlock();
-        }
-        catch(IOException ioe) {
-            readLock.unlock();
-            return false;
-
-        }
-        return true;
+        boolean value = readManager(s);
+        readLock.unlock();
+        return value;
     }
 
 
     public boolean write(Socket s) {
         writeLock.lock();
-
-        try {
-            writeManager(s);
-            writeLock.unlock();
-        }
-        catch(IOException ioe) {
-            writeLock.unlock();
-            return false;
-
-        }
-        return true;
+        boolean value = writeManager(s);
+        writeLock.unlock();
+        return value;
     }
 
     public boolean remove() {
@@ -61,37 +46,80 @@ public class FileManager extends File {
         return value;
     }
 
-    private void writeManager(Socket s) throws IOException {
-        InputStream is = s.getInputStream();
-        byte[] buffer = new byte[1024];
-        FileOutputStream fos = new FileOutputStream(this);
-        BufferedInputStream bis = new BufferedInputStream(is);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        int readBytes = 0;
-        while ((readBytes = bis.read(buffer)) != -1)
-            bos.write(buffer, 0, readBytes);
-        bos.flush();
-        bos.close();
+    private boolean writeManager(Socket s){
+        InputStream is = null;
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        boolean value = false;
 
-        bis.close();
-        fos.close();
-        is.close();
+        try {
+            is = s.getInputStream();
+            byte[] buffer = new byte[1024];
+
+            fos = new FileOutputStream(this);
+            bis = new BufferedInputStream(is);
+            bos = new BufferedOutputStream(fos);
+            int readBytes = 0;
+
+            while ((readBytes = bis.read(buffer)) != -1)
+                bos.write(buffer, 0, readBytes);
+
+            value = true;
+        } catch (IOException e) {
+            value = false;
+        }
+        finally {
+            try {
+                bos.flush();
+                bos.close();
+
+                bis.close();
+                fos.close();
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return value;
     }
 
-    private void readManager(Socket s) throws IOException {
-        OutputStream os = s.getOutputStream();
-        byte[] buffer = new byte[1024];
-        FileInputStream fis = new FileInputStream(this);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        BufferedOutputStream bos = new BufferedOutputStream(os);
-        int readBytes = 0;
-        while ((readBytes = bis.read(buffer)) != -1)
-            bos.write(buffer, 0, readBytes);
-        bos.flush();
-        bos.close();
+    private boolean readManager(Socket s){
+        OutputStream os = null;
+        FileInputStream fis = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        boolean value = false;
 
-        fis.close();
-        bis.close();
-        os.close();
+        try {
+            os = s.getOutputStream();
+            byte[] buffer = new byte[1024];
+            fis = new FileInputStream(this);
+            bis = new BufferedInputStream(fis);
+            bos = new BufferedOutputStream(os);
+            int readBytes = 0;
+            while ((readBytes = bis.read(buffer)) != -1)
+                bos.write(buffer, 0, readBytes);
+
+            value = true;
+        } catch (IOException e) {
+            value = false;
+        }
+        finally {
+            try {
+                bos.flush();
+                bos.close();
+
+                fis.close();
+                bis.close();
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return value;
+
     }
 }
