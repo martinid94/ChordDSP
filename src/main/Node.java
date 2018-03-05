@@ -59,11 +59,7 @@ public class Node {
         RingConnection rc = new RingConnection(bootstrapNode);
         InetSocketAddress mySucc = null;
 
-        try {
-            mySucc = rc.bootstapRequest(localId);
-        } catch (IOException | ClassNotFoundException ei) {
-            return false;
-        }
+        mySucc = rc.bootstapRequest(localId);
 
 
         //error in bootstapRequest
@@ -73,11 +69,8 @@ public class Node {
 
         rc = new RingConnection(mySucc);
         InetSocketAddress myPred = null;
-        try {
-            myPred = rc.joinRequest(localAddress);
-        } catch (IOException | ClassNotFoundException ei) {
-            return false;
-        }
+        myPred = rc.joinRequest(localAddress);
+
 
         //myPred == null if there is an error (join is not available)
         if(myPred == null){
@@ -105,21 +98,21 @@ public class Node {
 
     public InetSocketAddress findSuccessor(BigInteger id){
 
-        //Todo Warning if there is only one node in the ring
         InetSocketAddress predessor = findPredecessor(id);
 
         if(predessor == null){
             return null;
         }
 
-        RingConnection rg = new RingConnection(predessor);
+        //if this node is the predecessor of id then return the successor of this node
+        if(predessor.equals(localAddress)){
+            return getSuccAddress();
+        }
+
+        RingConnection rc = new RingConnection(predessor);
 
         InetSocketAddress ret = null;
-        try {
-            ret = rg.addressRequest("GET_SUCC");
-        } catch (IOException | ClassNotFoundException e) {
-            return null;
-        }
+        ret = rc.addressRequest("GET_SUCC");
 
         return ret;
     }
@@ -133,6 +126,11 @@ public class Node {
             return null;
         }
 
+        //only one node in the ring
+        if(succ.equals(localAddress) && succ.equals(predAddress)){
+            return localAddress;
+        }
+
         while(!Util.belongsToInterval(id, n, Util.hashAdress(succ))){
 
             if(n.equals(localId)){
@@ -143,11 +141,8 @@ public class Node {
 
                 RingConnection rc = new RingConnection(nAddr);
                 InetSocketAddress temp = null;
-                try {
-                    temp = rc.closestRequest(id);
-                } catch (IOException | ClassNotFoundException e) {
-                    return null;
-                }
+                temp = rc.closestRequest(id);
+
 
                 if(temp == null){
                     return null;
@@ -159,11 +154,7 @@ public class Node {
                 nAddr = temp;
                 n = Util.hashAdress(nAddr);
                 rc = new RingConnection(nAddr);
-                try {
-                    succ = rc.addressRequest("GET_SUCC");
-                } catch (IOException | ClassNotFoundException e) {
-                    return null;
-                }
+                succ = rc.addressRequest("GET_SUCC");
 
                 if(succ == null){
                     return null;
@@ -265,11 +256,7 @@ public class Node {
         }
 
         InetSocketAddress predPred = null;
-        try {
-            predPred = rc.addressRequest("GET_PRED");
-        } catch (IOException | ClassNotFoundException e) {
-            return value;
-        }
+        predPred = rc.addressRequest("GET_PRED");
 
         if(predPred == null){
             return value;

@@ -18,13 +18,12 @@ public class RingConnection extends Connection {
      * @param localId
      * @return invoker's successor in the ring
      */
-    public InetSocketAddress bootstapRequest(BigInteger localId) throws IOException, ClassNotFoundException {
+    public InetSocketAddress bootstapRequest(BigInteger localId){
         if (localId == null) {
-            throw new IllegalArgumentException("Argument can not be null");
+            return null;
         }
 
         InetSocketAddress mySucc = (InetSocketAddress) sendReceive("FIND_SUCC", null);
-        closeConnection();
         return mySucc;
     }
 
@@ -34,14 +33,12 @@ public class RingConnection extends Connection {
      * @param req: specifies whether successor or predecessor is requested
      * @return the successor or predecessor of a node
      */
-    public InetSocketAddress addressRequest(String req) throws IOException, ClassNotFoundException {
+    public InetSocketAddress addressRequest(String req) {
         if (!(req.equals("GET_SUCC") || req.equals("GET_PRED"))) {//req must be either GET_SUCC or GET_PRED
-            throw new IllegalArgumentException("The argument must be either GET_SUCC or GET_PRED");
+            return null;
         }
 
         InetSocketAddress addressRequested = (InetSocketAddress) sendReceive(req, null);
-        closeConnection();
-
         return addressRequested;
     }
 
@@ -51,12 +48,11 @@ public class RingConnection extends Connection {
      * @param id: specifies id
      * @return the successor or predecessor of a node
      */
-    public InetSocketAddress closestRequest(BigInteger id) throws IOException, ClassNotFoundException {
+    public InetSocketAddress closestRequest(BigInteger id){
         if(id == null){
             return null;
         }
         InetSocketAddress addressRequested = (InetSocketAddress) sendReceive("GET_CLOSEST", id);
-        closeConnection();
 
         return addressRequested;
     }
@@ -68,14 +64,12 @@ public class RingConnection extends Connection {
      * @param myself
      * @return my successor's old predecessor (which can be now set as my predecessor)
      */
-    public InetSocketAddress joinRequest(InetSocketAddress myself) throws IOException, ClassNotFoundException {
+    public InetSocketAddress joinRequest(InetSocketAddress myself){
         if (myself == null) {
-            throw new IllegalArgumentException("Argument can not be null");
+            return null;
         }
 
         InetSocketAddress myPred = (InetSocketAddress) sendReceive("JOIN", myself);
-        closeConnection();
-
         return myPred;
     }
 
@@ -84,9 +78,8 @@ public class RingConnection extends Connection {
      *
      * @return a node's joinAvailable value, null if the connection failed
      */
-    public boolean getAndSetAvailabilityRequest(boolean status) throws IOException, ClassNotFoundException {
+    public boolean getAndSetAvailabilityRequest(boolean status){
         boolean joinAvailability = (Boolean) sendReceive("GET&SET_JA", new Boolean(status));
-        closeConnection();
 
         return joinAvailability;
     }
@@ -97,14 +90,12 @@ public class RingConnection extends Connection {
      * @param newPred
      * @return true if the communication and the variable setting has been performed correctly
      */
-    public boolean setPredecessorRequest(InetSocketAddress newPred) throws IOException, ClassNotFoundException {
+    public boolean setPredecessorRequest(InetSocketAddress newPred){
         if (newPred == null) {
-            throw new IllegalArgumentException("Argument can not be null");
+            return false;
         }
 
         boolean ack = (Boolean) sendReceive("SET_PRED", newPred);
-        closeConnection();
-
         return ack;
     }
 
@@ -114,26 +105,36 @@ public class RingConnection extends Connection {
      * @param newSucc
      * @return true if the communication and the variable setting has been performed correctly
      */
-    public boolean setSuccessorRequest(InetSocketAddress newSucc) throws IOException, ClassNotFoundException {
+    public boolean setSuccessorRequest(InetSocketAddress newSucc){
         if (newSucc == null) {
-            throw new IllegalArgumentException("Argument can not be null");
+            return false;
         }
 
         boolean ack = (Boolean) sendReceive("SET_SUCC", newSucc);
-        closeConnection();
-
         return ack;
     }
 
-    private Object sendReceive(String request, Object param) throws IOException, ClassNotFoundException {
-        startConnection();
-        if (request != null) {
-            oos.writeObject(request);
+    private Object sendReceive(String request, Object param){
+        Object obj = null;
+        try {
+            startConnection();
+            if (request != null) {
+                oos.writeObject(request);
+            }
+            if (param != null) {
+                oos.writeObject(param);
+            }
+            oos.flush();
+            obj = ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            obj = null;
         }
-        if (param != null) {
-            oos.writeObject(param);
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
         }
-        oos.flush();
-        return ois.readObject();
+
+        return obj;
     }
 }

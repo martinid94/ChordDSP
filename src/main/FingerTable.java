@@ -37,12 +37,33 @@ public class FingerTable {
         return table[i];
     }
 
-    public void deleteNode(InetSocketAddress addr) {
+    public synchronized void deleteNode(InetSocketAddress addr) {
         for (int i = Util.m -1; i >= 0; i--) {
             InetSocketAddress ithfinger = this.getIthFinger(i);
             if (ithfinger != null && ithfinger.equals(addr))
                 updateIthFinger(i, null);
         }
+    }
+
+    public synchronized void fillSuccessor(InetSocketAddress localAddress){
+        InetSocketAddress succ = table[0];
+
+        if(succ == null){
+            for (int k = 1; k < Util.m; k++) {
+                InetSocketAddress ithfinger = table[k];
+                if (ithfinger!=null && !ithfinger.equals(localAddress)) {
+                    for (int j = k-1; j >= 0; j--) {
+                        table[j] = ithfinger;
+                    }
+                    break;
+                }
+            }
+        }
+
+//        successor = getSuccessor();
+//        if ((successor == null || successor.equals(localAddress)) && predecessor!=null && !predecessor.equals(localAddress)) {
+//            updateIthFinger(1, predecessor);
+//        }
     }
 
     public String toString(){

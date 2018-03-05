@@ -151,7 +151,15 @@ public class Executor extends Thread{
             return;
         }
 
-        oos.writeBoolean(node.setPredecessor(newPred));
+        InetSocketAddress myPred = node.getPredAddress();
+
+        if(myPred == null ||
+                Util.belongsToOpenInterval(Util.hashAdress(newPred), Util.hashAdress(myPred), Util.hashAdress(node.getLocalAddress()))){
+            oos.writeBoolean(node.setPredecessor(newPred));
+            oos.flush();
+        }
+
+        oos.writeBoolean(false);
         oos.flush();
 
     }
