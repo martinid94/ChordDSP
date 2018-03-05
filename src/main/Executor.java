@@ -58,7 +58,6 @@ public class Executor extends Thread{
                     setPredecessor();
             }
 
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

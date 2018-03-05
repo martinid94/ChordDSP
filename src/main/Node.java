@@ -105,17 +105,19 @@ public class Node {
 
     public InetSocketAddress findSuccessor(BigInteger id){
 
-
+        //Todo Warning if there is only one node in the ring
         InetSocketAddress predessor = findPredecessor(id);
+
+        if(predessor == null){
+            return null;
+        }
 
         RingConnection rg = new RingConnection(predessor);
 
         InetSocketAddress ret = null;
         try {
             ret = rg.addressRequest("GET_SUCC");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             return null;
         }
 
@@ -124,7 +126,51 @@ public class Node {
 
     public InetSocketAddress findPredecessor(BigInteger id){
 
-        return null;
+        BigInteger n = localId;
+        InetSocketAddress nAddr = localAddress;
+        InetSocketAddress succ = getSuccAddress();
+        if(succ == null){
+            return null;
+        }
+
+        while(!Util.belongsToInterval(id, n, Util.hashAdress(succ))){
+
+            if(n.equals(localId)){
+                nAddr = closestPrecedingNode(id);
+                n = Util.hashAdress(nAddr);
+            }
+            else{
+
+                RingConnection rc = new RingConnection(nAddr);
+                InetSocketAddress temp = null;
+                try {
+                    temp = rc.closestRequest(id);
+                } catch (IOException | ClassNotFoundException e) {
+                    return null;
+                }
+
+                if(temp == null){
+                    return null;
+                }
+                else if(temp.equals(nAddr)){
+                    return nAddr;
+                }
+
+                nAddr = temp;
+                n = Util.hashAdress(nAddr);
+                rc = new RingConnection(nAddr);
+                try {
+                    succ = rc.addressRequest("GET_SUCC");
+                } catch (IOException | ClassNotFoundException e) {
+                    return null;
+                }
+
+                if(succ == null){
+                    return null;
+                }
+            }
+        }
+        return nAddr;
     }
 
     public InetSocketAddress closestPrecedingNode(BigInteger id){
@@ -245,7 +291,6 @@ public class Node {
             }
             return value;
         }
-
 
         return value;
     }

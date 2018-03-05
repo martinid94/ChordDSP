@@ -46,6 +46,22 @@ public class RingConnection extends Connection {
     }
 
     /**
+     * Method used to request a node for its successor or predecessor
+     *
+     * @param id: specifies id
+     * @return the successor or predecessor of a node
+     */
+    public InetSocketAddress closestRequest(BigInteger id) throws IOException, ClassNotFoundException {
+        if(id == null){
+            return null;
+        }
+        InetSocketAddress addressRequested = (InetSocketAddress) sendReceive("GET_CLOSEST", id);
+        closeConnection();
+
+        return addressRequested;
+    }
+
+    /**
      * Method used after a bootstrapRequest() call.
      * It aims to contact the invoker's successor and begin a join procedure if it can perform it.
      *
