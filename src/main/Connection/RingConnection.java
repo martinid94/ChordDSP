@@ -78,8 +78,8 @@ public class RingConnection extends Connection {
      *
      * @return a node's joinAvailable value, null if the connection failed
      */
-    public boolean getAndSetAvailabilityRequest(boolean status){
-        boolean joinAvailability = (Boolean) sendReceive("GET&SET_JA", new Boolean(status));
+    public Boolean getAndSetAvailabilityRequest(boolean status){
+        Boolean joinAvailability = (Boolean) sendReceive("GET&SET_JA", new Boolean(status));
 
         return joinAvailability;
     }
@@ -90,12 +90,16 @@ public class RingConnection extends Connection {
      * @param newPred
      * @return true if the communication and the variable setting has been performed correctly
      */
-    public boolean setPredecessorRequest(InetSocketAddress newPred){
+    public Boolean setPredecessorRequest(InetSocketAddress newPred){
         if (newPred == null) {
             return false;
         }
 
-        boolean ack = (Boolean) sendReceive("SET_PRED", newPred);
+        Boolean ack = (Boolean) sendReceive("SET_PRED", newPred);
+        if(ack == null){
+            return false;
+        }
+
         return ack;
     }
 
@@ -105,12 +109,17 @@ public class RingConnection extends Connection {
      * @param newSucc
      * @return true if the communication and the variable setting has been performed correctly
      */
-    public boolean setSuccessorRequest(InetSocketAddress newSucc){
+    public Boolean setSuccessorRequest(InetSocketAddress newSucc){
         if (newSucc == null) {
             return false;
         }
 
-        boolean ack = (Boolean) sendReceive("SET_SUCC", newSucc);
+        Boolean ack = (Boolean) sendReceive("SET_SUCC", newSucc);
+
+        if(ack == null){
+            return false;
+        }
+
         return ack;
     }
 

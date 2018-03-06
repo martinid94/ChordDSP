@@ -23,6 +23,7 @@ public class CheckPredecessor extends Thread{
 
             try {
                 if(!pred.getAddress().isReachable(3000)){
+                    node.getAndSetJoinAvailable(false);
                     node.setPredecessor(null);
                 }
             } catch (IOException e) {}

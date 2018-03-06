@@ -3,7 +3,6 @@ package main;
 import main.Connection.FileConnection;
 import main.Connection.RingConnection;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
@@ -209,19 +208,12 @@ public class Node {
             files.put(fileName, fm);
 
             FileConnection fc = new FileConnection(this, predAddress);
-            try{
-                if(!fc.insertFileRequest(fileName, true)){
-                    fc.insertFileRequest(fileName, true);
-                }
+
+            if(!fc.insertFileRequest(fileName, true)){
+                fc = new FileConnection(this, predAddress);
+                fc.insertFileRequest(fileName, true);
             }
-            catch(IOException | ClassNotFoundException exc) {
-                try {
-                    fc = new FileConnection(this, predAddress);
-                    fc.insertFileRequest(fileName, true);
-                } catch (IOException | ClassNotFoundException e) {
-                    return true;
-                }
-            }
+
         }
         return value;
     }
@@ -242,17 +234,10 @@ public class Node {
         InetSocketAddress pred = predAddress;
         RingConnection rc = new RingConnection(pred);
         FileConnection fc = new FileConnection(this, pred);
-        try {
-            if(fc.hasFileRequest(fileName)){
-                fc.deleteFileRequest(fileName, true);
-            }
-        }
-        catch (IOException | ClassNotFoundException exc) {
-            try {
-                if(fc.hasFileRequest(fileName)){
-                    fc.deleteFileRequest(fileName, true);
-                }
-            } catch (IOException | ClassNotFoundException e) {}
+
+        if(!fc.deleteFileRequest(fileName, true)){
+            fc = new FileConnection(this, pred);
+            fc.deleteFileRequest(fileName, true);
         }
 
         InetSocketAddress predPred = null;
@@ -263,20 +248,10 @@ public class Node {
         }
 
         fc = new FileConnection(this, predPred);
-        try {
-            if(fc.hasFileRequest(fileName)){
-                fc.deleteFileRequest(fileName, true);
-            }
-        }
-        catch (IOException | ClassNotFoundException exc) {
-            try {
-                if(fc.hasFileRequest(fileName)){
-                    fc.deleteFileRequest(fileName, true);
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                return value;
-            }
-            return value;
+
+        if(!fc.deleteFileRequest(fileName, true)){
+            fc = new FileConnection(this, predPred);
+            fc.deleteFileRequest(fileName, true);
         }
 
         return value;

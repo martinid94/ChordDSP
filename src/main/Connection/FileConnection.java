@@ -21,11 +21,14 @@ public class FileConnection  extends Connection{
         rc = new RingConnection(nodeAd);
     }
 
-    public boolean getFileRequest(String fileName) throws IOException, ClassNotFoundException {
+    public boolean getFileRequest(String fileName) {
+        //Todo create an auxiliary method
         if(fileName == null || fileName.equals(""))
-            throw new IllegalArgumentException("Invalid argument");
+            return false;
 
-        for(int i = 0; i < 2; i++) {
+        boolean retVal = false;
+
+        try {
             startConnection();
             oos.writeObject("GET_FILE");
             oos.writeObject(fileName);
@@ -35,78 +38,145 @@ public class FileConnection  extends Connection{
             if(!hasFile) {
                 InetSocketAddress newContact = rc.addressRequest("GET_PRED");
                 nodeAddress = newContact;
-                closeConnection();
             }
             else {
-                boolean retVal = localNode.singleInsert(s, fileName);
-                closeConnection();
-                return retVal;
+                retVal = localNode.singleInsert(s, fileName);
             }
+        } catch (IOException e) {
+            retVal = false;
         }
-        return false;
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
+        }
+
+        if(retVal){
+            return true;
+        }
+
+        try {
+            startConnection();
+            oos.writeObject("GET_FILE");
+            oos.writeObject(fileName);
+            oos.flush();
+
+            boolean hasFile = ois.readBoolean();
+            if(hasFile) {
+                retVal = localNode.singleInsert(s, fileName);
+            }
+        } catch (IOException e) {
+            retVal = false;
+        }
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
+        }
+
+        return retVal;
     }
 
-    public ArrayList<String> fileIntervalRequest(BigInteger from, BigInteger to) throws IOException, ClassNotFoundException {
+    public ArrayList<String> fileIntervalRequest(BigInteger from, BigInteger to){
         if(from == null || to == null)
-            throw new IllegalArgumentException("Arguments can not be null");
+            return null;
 
-        startConnection();
-        oos.writeObject("GET_FILE_INTERVAL"); // insert flush here?
-        oos.writeObject(from);
-        oos.writeObject(to);
-        oos.flush();
-
-        ArrayList<String> retVal = (ArrayList<String>) ois.readObject();
-        closeConnection();
+        ArrayList<String> retVal = null;
+        try {
+            startConnection();
+            oos.writeObject("GET_FILE_INTERVAL"); // insert flush here?
+            oos.writeObject(from);
+            oos.writeObject(to);
+            oos.flush();
+            retVal = (ArrayList<String>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            retVal = null;
+        }
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
+        }
 
         return retVal;
     }
 
-    public boolean insertFileRequest(String fileName, boolean replica) throws IOException, ClassNotFoundException {
-        if(fileName == null || fileName.equals(""))
-            throw new IllegalArgumentException("Invalid argument");
-
-        startConnection();
-        if(!replica)
-            oos.writeObject("INSERT_FILE"); //local insert plus replica
-        else
-            oos.writeObject("INSERT_REPLICA"); //single insert request
-        oos.writeObject(fileName);
-        oos.flush();
-
-        boolean retVal = localNode.get(s, fileName);
-        closeConnection();
-        return retVal;
-    }
-
-    public boolean deleteFileRequest(String fileName, boolean replica) throws IOException, ClassNotFoundException {
+    public boolean insertFileRequest(String fileName, boolean replica){
         if(fileName == null || fileName.equals(""))
             return false;
 
-        startConnection();
-        if(!replica)
-            oos.writeObject("DELETE_FILE"); //replica removal needed
-        else
-            oos.writeObject("DELETE_REPLICA"); //single local removal
-        oos.writeObject(fileName);
-        oos.flush();
+        boolean retVal = false;
+        try {
+            startConnection();
+            if(!replica)
+                oos.writeObject("INSERT_FILE"); //local insert plus replica
+            else
+                oos.writeObject("INSERT_REPLICA"); //single insert request
+            oos.writeObject(fileName);
+            oos.flush();
 
-        boolean retVal = ois.readBoolean();
-        closeConnection();
+            retVal = localNode.get(s, fileName);
+        } catch (IOException e) {
+            retVal = false;
+        }
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
+        }
+
         return retVal;
     }
 
-    public boolean hasFileRequest(String fileName) throws IOException {
+    public boolean deleteFileRequest(String fileName, boolean replica){
+        if(fileName == null || fileName.equals(""))
+            return false;
+
+        boolean retVal = false;
+        try {
+            startConnection();
+            if(!replica)
+                oos.writeObject("DELETE_FILE"); //replica removal needed
+            else
+                oos.writeObject("DELETE_REPLICA"); //single local removal
+            oos.writeObject(fileName);
+            oos.flush();
+
+            retVal = ois.readBoolean();
+        } catch (IOException e) {
+            retVal = false;
+        }
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
+        }
+
+        return retVal;
+    }
+
+    public boolean hasFileRequest(String fileName){
         if(fileName == null || fileName.equals(""))
            return false;
 
-        startConnection();
-        oos.writeObject("HAS_FILE");
-        oos.writeObject(fileName);
-        oos.flush();
+        boolean result = false;
+        try {
+            startConnection();
+            oos.writeObject("HAS_FILE");
+            oos.writeObject(fileName);
+            oos.flush();
 
-        boolean result = ois.readBoolean();
-        closeConnection();
+            result = ois.readBoolean();
+        } catch (IOException e) {
+            result = false;
+        }
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
+        }
+
+
         return result;
     }
 }
