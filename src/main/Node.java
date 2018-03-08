@@ -134,18 +134,18 @@ public class Node {
 
     public InetSocketAddress findSuccessor(BigInteger id){
 
-        InetSocketAddress predessor = findPredecessor(id);
+        InetSocketAddress predecessor = findPredecessor(id);
 
-        if(predessor == null){
+        if(predecessor == null){
             return null;
         }
 
         //if this node is the predecessor of id then return the successor of this node
-        if(predessor.equals(localAddress)){
+        if(predecessor.equals(localAddress)){
             return getSuccAddress();
         }
 
-        RingConnection rc = new RingConnection(predessor);
+        RingConnection rc = new RingConnection(predecessor);
 
         InetSocketAddress ret = null;
         ret = rc.addressRequest("GET_SUCC");
@@ -315,6 +315,10 @@ public class Node {
     }
 
     public ArrayList<String> getFilesInterval(BigInteger from, BigInteger to) {
+        if(from == null || to == null) {
+            return null;
+        }
+
         ArrayList<String> result = new ArrayList<>();
 
         for(String s : files.keySet()){
@@ -325,12 +329,25 @@ public class Node {
         return result;
     }
 
+    public boolean deleteFilesInterval(BigInteger from, BigInteger to) {
+        if(from == null || to == null) {
+            return false;
+        }
+
+        for(String s : files.keySet()){
+            if(Util.belongsToInterval(Util.hashFile(s), from, to)){
+                singleDelete(s); //what if something goes wrong here?
+            }
+        }
+        return true;
+    }
+
     public boolean singleInsert(Socket s, String fileName) {
         if(s == null || fileName == null || fileName.equals("")){
             return false;
         }
 
-        FileManager fm =files.get(fileName);
+        FileManager fm = files.get(fileName);
         if(fm == null){
             fm = new FileManager(fileName);
         }

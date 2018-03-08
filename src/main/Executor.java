@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by Marco on 24/02/2018.
@@ -42,6 +42,7 @@ public class Executor extends Thread{
             request = (String) ois.readObject();
 
             switch (request){
+                //RingConnection requests
                 case "FIND_SUCC":
                     findSuccessor();
                 case "JOIN":
@@ -50,12 +51,32 @@ public class Executor extends Thread{
                     getSuccessor();
                 case "GET_PRED":
                     getPredecessor();
+                case "GET_CLOSEST":
+                    getClosestPrecedingNode();
                 case "GET&SET_JA":
                     getAndSetAvailability();
                 case "SET_SUCC":
                     setSuccessor();
                 case "SET_PRED":
                     setPredecessor();
+
+                //FileConnection requests
+                case "GET_FILE":
+                    getFile();
+                case "GET_FILE_INTERVAL":
+                    getFileInterval();
+                case "INSERT_FILE":
+                    insertFile();
+                case "INSERT_REPLICA":
+                    insertReplica();
+                case "DELETE_FILE":
+                    deleteFile();
+                case "DELETE_REPLICA":
+                    deleteReplica();
+                case "DELETE_REPLICAS":
+                    deleteReplicas();
+                case "HAS_FILE":
+                    hasFile();
             }
 
         } catch (IOException e) {
@@ -76,16 +97,18 @@ public class Executor extends Thread{
             }
         }
 
-
-
     }
 
-    private void findSuccessor() throws IOException, ClassNotFoundException{
+    private void findSuccessor() throws IOException, ClassNotFoundException {
 
         BigInteger id = (BigInteger) ois.readObject();
+        if(id == null) {
+            oos.writeObject(null);
+            oos.flush();
+            return;
+        }
 
-        //TODO chiama il findsuccessor di node
-        InetSocketAddress successor = null; //new InetSocketAddress(InetAddress.getByName("192.168.1.3"), 4544);
+        InetSocketAddress successor = node.findSuccessor(id); //new InetSocketAddress(InetAddress.getByName("192.168.1.3"), 4544);
         oos.writeObject(successor);
         oos.flush();
     }
@@ -94,6 +117,7 @@ public class Executor extends Thread{
 
         InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
 
+        //joinAvailable variable is set to false in the if condition: a join operation can be performed now
         if(newPred == null || !node.getAndSetJoinAvailable(false)){
             //respond with message error
             oos.writeObject(null);
@@ -115,6 +139,19 @@ public class Executor extends Thread{
     private void getPredecessor() throws IOException {
 
         oos.writeObject(node.getPredAddress());
+        oos.flush();
+    }
+
+    private void getClosestPrecedingNode() throws IOException, ClassNotFoundException {
+
+        BigInteger id = (BigInteger) ois.readObject();
+        if(id == null) {
+            oos.writeObject(null);
+            oos.flush();
+            return;
+        }
+
+        oos.writeObject(node.closestPrecedingNode(id));
         oos.flush();
     }
 
@@ -144,6 +181,8 @@ public class Executor extends Thread{
 
         InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
 
+        //joinAvailable variable is set to false in the if condition: after changing predecessor,
+        // no join is available since files must be updated
         if(newPred == null || !node.getAndSetJoinAvailable(false)){
             //respond with false
             oos.writeBoolean(false);
@@ -153,15 +192,73 @@ public class Executor extends Thread{
 
         InetSocketAddress myPred = node.getPredAddress();
 
-        if(myPred == null ||
-                Util.belongsToOpenInterval(Util.hashAdress(newPred), Util.hashAdress(myPred), Util.hashAdress(node.getLocalAddress()))){
+        //if my current predecessor is null no check can be performed, so newPred is accepted
+        //otherwise, it is updated only if the new one lies between me and my current predecessor (i.e. a join occurs)
+        //this check must be performed in order to avoid Chord ring failures
+        if(myPred == null || Util.belongsToOpenInterval(Util.hashAdress(newPred),
+                Util.hashAdress(myPred), Util.hashAdress(node.getLocalAddress()))){
             oos.writeBoolean(node.setPredecessor(newPred));
             oos.flush();
         }
 
         oos.writeBoolean(false);
         oos.flush();
-
     }
 
+    private void getFile() throws  IOException, ClassNotFoundException {
+        String fileName = (String) ois.readObject();
+        if(node.hasFile(fileName)) {
+            oos.writeBoolean(true); //file found
+            oos.flush();
+
+            node.get(sock, fileName);
+        }
+        else
+            oos.writeBoolean(false); //file not found
+            oos.flush();
+    }
+
+    private void getFileInterval() throws  IOException, ClassNotFoundException {
+        BigInteger from = (BigInteger) ois.readObject();
+        BigInteger to = (BigInteger) ois.readObject();
+
+        oos.writeObject(node.getFilesInterval(from, to));
+    }
+
+    private void insertFile() throws IOException, ClassNotFoundException {
+        String fileName = (String) ois.readObject();
+        node.insertFile(sock, fileName); //files map is updated by insertFile method
+    }
+
+    private void insertReplica() throws IOException, ClassNotFoundException {
+        String fileName = (String) ois.readObject();
+        node.singleInsert(sock, fileName); //files map is updated by singleInsert method
+    }
+
+    private void deleteFile() throws IOException, ClassNotFoundException {
+        String fileName = (String) ois.readObject();
+
+        oos.writeBoolean(node.delete(fileName)); //files map is updated by delete method
+        oos.flush();
+    }
+
+    private void deleteReplica() throws IOException, ClassNotFoundException {
+        String fileName = (String) ois.readObject();
+
+        oos.writeBoolean(node.singleDelete(fileName)); //files map is updated by singleDelete method
+        oos.flush();
+    }
+
+    private void deleteReplicas() throws IOException, ClassNotFoundException {
+        BigInteger from = (BigInteger) ois.readObject();
+        BigInteger to = (BigInteger) ois.readObject();
+
+        oos.writeBoolean(node.deleteFilesInterval(from, to)); //files map is updated by deleteFilesInterval method
+    }
+
+    private void hasFile() throws IOException, ClassNotFoundException {
+        String fileName = (String) ois.readObject();
+
+        oos.writeBoolean(node.hasFile(fileName));
+    }
 }
