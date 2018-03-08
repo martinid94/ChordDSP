@@ -35,10 +35,23 @@ public class FileUpdater extends Thread {
         if(isJoin){
             RingConnection rc = new RingConnection(contactAddr);
             if(rc.getAndSetAvailabilityRequest(true) == null){
-                
+                rc.getAndSetAvailabilityRequest(true);
+            }
+
+            node.getAndSetJoinAvailable(true);
+
+            FileConnection fc = new FileConnection(node, node.getSuccAddress());
+            if(!fc.deleteFilesRequest(Util.hashAdress(node.getPredAddress()), node.getLocalId())){
+                fc.deleteFilesRequest(Util.hashAdress(node.getPredAddress()), node.getLocalId());
+            }
+
+            fc = new FileConnection(node, node.getPredAddress());
+            if(!fc.deleteFilesRequest(node.getLocalId(), Util.hashAdress(node.getSuccAddress()))){
+                fc.deleteFilesRequest(node.getLocalId(), Util.hashAdress(node.getSuccAddress()));
             }
         }else{
 
+            node.getAndSetJoinAvailable(true);
         }
 
     }

@@ -22,6 +22,9 @@ public class Node {
     private InetSocketAddress predAddress;
     private FingerTable fTable;
     private Listener listener;
+    private CheckPredecessor checkPred;
+    private FixFinger fixFinger;
+    private Stabilizer stabilizer;
     private ConcurrentHashMap<String, FileManager> files;
     //file manager da inserire
     //eventuali altri thread
@@ -38,6 +41,9 @@ public class Node {
         joinAvailable = new AtomicBoolean();
         predAddress = null;
         listener = new Listener(this);
+        checkPred = new CheckPredecessor(this);
+        fixFinger = new FixFinger(this);
+        stabilizer = new Stabilizer(this);
         files = new ConcurrentHashMap<>();
     }
 
@@ -56,9 +62,8 @@ public class Node {
         joinAvailable.set(false);
 
         RingConnection rc = new RingConnection(bootstrapNode);
-        InetSocketAddress mySucc = null;
+        InetSocketAddress mySucc = rc.bootstapRequest(localId);
 
-        mySucc = rc.bootstapRequest(localId);
 
 
         //error in bootstapRequest
@@ -67,8 +72,7 @@ public class Node {
         }
 
         rc = new RingConnection(mySucc);
-        InetSocketAddress myPred = null;
-        myPred = rc.joinRequest(localAddress);
+        InetSocketAddress myPred = rc.joinRequest(localAddress);
 
 
         //myPred == null if there is an error (join is not available)
@@ -81,18 +85,51 @@ public class Node {
 
         listener.start();
 
-        //TODO sendRequestSetSucc
+        rc = new RingConnection(myPred);
+        if(rc.setSuccessorRequest(localAddress) == null){
+            rc.setSuccessorRequest(localAddress);
+        }
 
-        //TODO attiva thread FileUpdater
-
-        //TODO attiva checkPredecessor, fixFingers, stabilizer
+        new FileUpdater(mySucc, this, Util.hashAdress(myPred), Util.hashAdress(mySucc), true).start();
+        checkPred.start();
+        fixFinger.start();
+        stabilizer.start();
 
         return true;
     }
 
     public boolean leave(){
 
-        return false;
+        RingConnection rc = new RingConnection(getSuccAddress());
+        Boolean succJoinAvailable = rc.getAndSetAvailabilityRequest(false);
+        if(succJoinAvailable == null){
+            succJoinAvailable = rc.getAndSetAvailabilityRequest(false);
+        }
+
+        if(succJoinAvailable == null || !succJoinAvailable){
+            return false;
+        }
+
+        if(!joinAvailable.getAndSet(false) && succJoinAvailable){
+            if(rc.getAndSetAvailabilityRequest(true) == null){
+                rc.getAndSetAvailabilityRequest(true);
+            }
+            joinAvailable.getAndSet(true);
+            return false;
+        }
+
+        if(!rc.setPredecessorRequest(getPredAddress())){
+            rc.setPredecessorRequest(getPredAddress());
+        }
+        rc = new RingConnection(getPredAddress());
+
+        if(!rc.setSuccessorRequest(getSuccAddress())){
+            rc.setSuccessorRequest(getSuccAddress());
+        }
+
+        //TODO bloccare i thread listener, fixfinger, askpredecessor, stabilizer
+
+        return true;
     }
 
     public InetSocketAddress findSuccessor(BigInteger id){

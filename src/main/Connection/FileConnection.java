@@ -155,6 +155,34 @@ public class FileConnection  extends Connection{
         return retVal;
     }
 
+    public boolean deleteFilesRequest(BigInteger from, BigInteger to){
+        if(from == null || to == null){
+            return false;
+        }
+
+        boolean retVal = false;
+
+        try {
+            startConnection();
+            oos.writeObject("DELETE_REPLICAS");
+            oos.writeObject(from);
+            oos.writeObject(to);
+            oos.flush();
+
+            retVal = ois.readBoolean();
+        } catch (IOException e) {
+            retVal = false;
+        }
+        finally {
+            try {
+                closeConnection();
+            } catch (IOException e) {}
+        }
+
+        return retVal;
+
+    }
+
     public boolean hasFileRequest(String fileName){
         if(fileName == null || fileName.equals(""))
            return false;
