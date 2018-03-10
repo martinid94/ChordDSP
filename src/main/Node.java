@@ -20,6 +20,7 @@ public class Node {
     private InetSocketAddress localAddress;
     private AtomicBoolean joinAvailable;
     private InetSocketAddress predAddress;
+    private InetSocketAddress oldPred;
     private FingerTable fTable;
     private Listener listener;
     private CheckPredecessor checkPred;
@@ -40,6 +41,7 @@ public class Node {
         localId = Util.hashAdress(local);
         joinAvailable = new AtomicBoolean();
         predAddress = null;
+        oldPred = null;
         listener = new Listener(this);
         checkPred = new CheckPredecessor(this);
         fixFinger = new FixFinger(this);
@@ -81,6 +83,7 @@ public class Node {
         }
 
         predAddress = myPred;
+        oldPred = myPred;
         fTable.updateIthFinger(0, mySucc);
 
         listener.start();
@@ -401,14 +404,22 @@ public class Node {
         return joinAvailable.getAndSet(value);
     }
 
-    //TODO da aggiornare con i parametri (vari casi) e concorrenza
     public boolean setPredecessor(InetSocketAddress newPred){
+        if(predAddress != null){
+            oldPred = predAddress;
+        }
         predAddress = newPred;
+        if(Util.belongsToOpenInterval(Util.hashAdress(oldPred), Util.hashAdress(newPred), localId)){
+            (new FileUpdater(newPred, this, Util.hashAdress(newPred), Util.hashAdress(oldPred), false)).start();
+        }
         return true;
     }
 
     public boolean setSuccessor(InetSocketAddress newSucc){
         fTable.updateIthFinger(0, newSucc);
+        if(Util.belongsToOpenInterval(Util.hashAdress(fTable.getOldSucc()), localId, Util.hashAdress(newSucc))){
+            (new FileUpdater(newSucc, this, Util.hashAdress(fTable.getOldSucc()), Util.hashAdress(newSucc), false)).start();
+        }
         return true;
     }
 

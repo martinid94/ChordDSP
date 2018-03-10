@@ -8,9 +8,11 @@ import java.net.InetSocketAddress;
 public class FingerTable {
 
     InetSocketAddress[] table;
+    InetSocketAddress oldSucc;
 
     public FingerTable(){
         table = new InetSocketAddress[Util.m];
+        oldSucc = null;
     }
 
     /**
@@ -21,6 +23,9 @@ public class FingerTable {
     public synchronized void updateIthFinger(int i, InetSocketAddress node){
         if(i < 0 || i >= Util.m){
             throw new IllegalArgumentException();
+        }
+        if(i == 0 && table[i] != null){
+            oldSucc = table[i];
         }
         table[i] = node;
     }
@@ -40,8 +45,12 @@ public class FingerTable {
     public synchronized void deleteNode(InetSocketAddress addr) {
         for (int i = Util.m -1; i >= 0; i--) {
             InetSocketAddress ithfinger = this.getIthFinger(i);
-            if (ithfinger != null && ithfinger.equals(addr))
-                updateIthFinger(i, null);
+            if (ithfinger != null && ithfinger.equals(addr)){
+                if(i == 0 && table[i] != null){
+                    oldSucc = table[i];
+                }
+                table[i] = null;
+            }
         }
     }
 
@@ -64,6 +73,10 @@ public class FingerTable {
 //        if ((successor == null || successor.equals(localAddress)) && predecessor!=null && !predecessor.equals(localAddress)) {
 //            updateIthFinger(1, predecessor);
 //        }
+    }
+
+    public synchronized InetSocketAddress getOldSucc(){
+        return oldSucc;
     }
 
     public String toString(){

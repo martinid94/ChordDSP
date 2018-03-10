@@ -115,7 +115,8 @@ public class FileConnection  extends Connection{
             oos.writeObject(fileName);
             oos.flush();
 
-            retVal = localNode.get(s, fileName);
+            localNode.get(s, fileName);
+            retVal = ois.readBoolean();
         } catch (IOException e) {
             retVal = false;
         }

@@ -125,9 +125,13 @@ public class Executor extends Thread{
             return;
         }
 
+        InetSocketAddress pred = node.getPredAddress();
         oos.writeObject(node.getPredAddress());
+        if(pred != null){
+            node.setPredecessor(newPred);
+        }
+
         oos.flush();
-        node.setPredecessor(newPred);
     }
 
     private void getSuccessor() throws IOException {
@@ -192,16 +196,7 @@ public class Executor extends Thread{
 
         InetSocketAddress myPred = node.getPredAddress();
 
-        //if my current predecessor is null no check can be performed, so newPred is accepted
-        //otherwise, it is updated only if the new one lies between me and my current predecessor (i.e. a join occurs)
-        //this check must be performed in order to avoid Chord ring failures
-        if(myPred == null || Util.belongsToOpenInterval(Util.hashAdress(newPred),
-                Util.hashAdress(myPred), Util.hashAdress(node.getLocalAddress()))){
-            oos.writeBoolean(node.setPredecessor(newPred));
-            oos.flush();
-        }
-
-        oos.writeBoolean(false);
+        oos.writeBoolean(node.setPredecessor(newPred));
         oos.flush();
     }
 
@@ -213,9 +208,10 @@ public class Executor extends Thread{
 
             node.get(sock, fileName);
         }
-        else
+        else{
             oos.writeBoolean(false); //file not found
             oos.flush();
+        }
     }
 
     private void getFileInterval() throws  IOException, ClassNotFoundException {
@@ -227,12 +223,15 @@ public class Executor extends Thread{
 
     private void insertFile() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
-        node.insertFile(sock, fileName); //files map is updated by insertFile method
+
+        oos.writeBoolean(node.insertFile(sock, fileName)); //files map is updated by insertFile method
+        oos.flush();
     }
 
     private void insertReplica() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
-        node.singleInsert(sock, fileName); //files map is updated by singleInsert method
+        oos.writeBoolean(node.singleInsert(sock, fileName)); //files map is updated by singleInsert method
+        oos.flush();
     }
 
     private void deleteFile() throws IOException, ClassNotFoundException {
