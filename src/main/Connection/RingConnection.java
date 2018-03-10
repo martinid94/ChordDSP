@@ -23,7 +23,7 @@ public class RingConnection extends Connection {
             return null;
         }
 
-        InetSocketAddress mySucc = (InetSocketAddress) sendReceive("FIND_SUCC", null);
+        InetSocketAddress mySucc = (InetSocketAddress) sendReceive("FIND_SUCC", localId);
         return mySucc;
     }
 
@@ -79,7 +79,7 @@ public class RingConnection extends Connection {
      * @return a node's joinAvailable value, null if the connection failed
      */
     public Boolean getAndSetAvailabilityRequest(boolean status){
-        Boolean joinAvailability = (Boolean) sendReceive("GET&SET_JA", new Boolean(status));
+        Boolean joinAvailability = (Boolean) sendReceive("GET&SET_JA", status);
 
         return joinAvailability;
     }

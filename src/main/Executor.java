@@ -45,38 +45,56 @@ public class Executor extends Thread{
                 //RingConnection requests
                 case "FIND_SUCC":
                     findSuccessor();
+                    break;
                 case "JOIN":
                     joinRequest();
+                    break;
                 case "GET_SUCC":
                     getSuccessor();
+                    break;
                 case "GET_PRED":
                     getPredecessor();
+                    break;
                 case "GET_CLOSEST":
                     getClosestPrecedingNode();
+                    break;
                 case "GET&SET_JA":
                     getAndSetAvailability();
+                    break;
                 case "SET_SUCC":
                     setSuccessor();
+                    break;
                 case "SET_PRED":
                     setPredecessor();
-
-                //FileConnection requests
+                    break;
                 case "GET_FILE":
                     getFile();
+                    break;
                 case "GET_FILE_INTERVAL":
                     getFileInterval();
+                    break;
                 case "INSERT_FILE":
                     insertFile();
+                    break;
                 case "INSERT_REPLICA":
                     insertReplica();
+                    break;
                 case "DELETE_FILE":
                     deleteFile();
+                    break;
                 case "DELETE_REPLICA":
                     deleteReplica();
+                    break;
                 case "DELETE_REPLICAS":
                     deleteReplicas();
+                    break;
                 case "HAS_FILE":
                     hasFile();
+                    break;
+                default:
+                    System.out.println("Error");
+                    break;
+
             }
 
         } catch (IOException e) {
@@ -93,7 +111,7 @@ public class Executor extends Thread{
             }
             catch(IOException ioe2)
             {
-                ioe2.printStackTrace();
+                //ioe2.printStackTrace();
             }
         }
 
@@ -116,7 +134,6 @@ public class Executor extends Thread{
     private void joinRequest() throws IOException, ClassNotFoundException {
 
         InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
-
         //joinAvailable variable is set to false in the if condition: a join operation can be performed now
         if(newPred == null || !node.getAndSetJoinAvailable(false)){
             //respond with message error
@@ -163,7 +180,7 @@ public class Executor extends Thread{
 
         boolean valueAvailable = (boolean) ois.readObject();
 
-        oos.writeBoolean(node.getAndSetJoinAvailable(valueAvailable));
+        oos.writeObject(node.getAndSetJoinAvailable(valueAvailable));
         oos.flush();
     }
 
@@ -172,12 +189,12 @@ public class Executor extends Thread{
 
         if(newSucc == null){
             //respond with false
-            oos.writeBoolean(false);
+            oos.writeObject(false);
             oos.flush();
             return;
         }
 
-        oos.writeBoolean(node.setSuccessor(newSucc));
+        oos.writeObject(node.setSuccessor(newSucc));
         oos.flush();
     }
 
@@ -185,18 +202,22 @@ public class Executor extends Thread{
 
         InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
 
+        if(node.getPredAddress() != null && node.getPredAddress().equals(newPred)){
+            oos.writeObject(true);
+            oos.flush();
+            return;
+        }
         //joinAvailable variable is set to false in the if condition: after changing predecessor,
         // no join is available since files must be updated
-        if(newPred == null || !node.getAndSetJoinAvailable(false)){
+        if(newPred == null){ // || !node.getAndSetJoinAvailable(false)
             //respond with false
-            oos.writeBoolean(false);
+            oos.writeObject(false);
             oos.flush();
             return;
         }
 
-        InetSocketAddress myPred = node.getPredAddress();
 
-        oos.writeBoolean(node.setPredecessor(newPred));
+        oos.writeObject(node.setPredecessor(newPred));
         oos.flush();
     }
 

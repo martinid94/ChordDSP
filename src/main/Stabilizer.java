@@ -4,6 +4,7 @@ import main.Connection.RingConnection;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 
 /**
  * Created by Marco on 04/03/2018.
@@ -28,9 +29,12 @@ public class Stabilizer extends Thread {
 
             boolean isReachable = false;
             try {
-                isReachable = succ.getAddress().isReachable(3000);
+                (new Socket(succ.getAddress(), succ.getPort())).close();
+                isReachable = true;
 
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                isReachable = false;
+            }
 
             if(!isReachable){
                 node.getfTable().deleteNode(succ);

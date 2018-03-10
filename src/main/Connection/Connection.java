@@ -50,8 +50,14 @@ public abstract class Connection {
      * @throws IOException
      */
     protected void closeConnection() throws IOException {
-        ois.close();
-        oos.close();
-        s.close();
+        if(ois != null)
+            ois.close();
+
+        if(oos != null)
+            oos.close();
+
+        if(s != null)
+            s.close();
+
     }
 }

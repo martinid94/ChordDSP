@@ -67,7 +67,6 @@ public class Node {
         InetSocketAddress mySucc = rc.bootstapRequest(localId);
 
 
-
         //error in bootstapRequest
         if(mySucc == null){
             return false;
@@ -94,6 +93,20 @@ public class Node {
         }
 
         new FileUpdater(mySucc, this, Util.hashAdress(myPred), Util.hashAdress(mySucc), true).start();
+        checkPred.start();
+        fixFinger.start();
+        stabilizer.start();
+
+        return true;
+    }
+
+    public boolean bootstrapJoin(){
+        predAddress = localAddress;
+        oldPred = localAddress;
+        fTable.updateIthFinger(0, localAddress);
+
+        joinAvailable.set(true);
+        listener.start();
         checkPred.start();
         fixFinger.start();
         stabilizer.start();
@@ -405,11 +418,13 @@ public class Node {
     }
 
     public boolean setPredecessor(InetSocketAddress newPred){
-        if(predAddress != null){
-            oldPred = predAddress;
+        synchronized (oldPred){
+            if(predAddress != null){
+                oldPred = predAddress;
+            }
+            predAddress = newPred;
         }
-        predAddress = newPred;
-        if(Util.belongsToOpenInterval(Util.hashAdress(oldPred), Util.hashAdress(newPred), localId)){
+        if(newPred != null && Util.belongsToOpenInterval(Util.hashAdress(oldPred), Util.hashAdress(newPred), localId)){
             (new FileUpdater(newPred, this, Util.hashAdress(newPred), Util.hashAdress(oldPred), false)).start();
         }
         return true;
@@ -417,7 +432,7 @@ public class Node {
 
     public boolean setSuccessor(InetSocketAddress newSucc){
         fTable.updateIthFinger(0, newSucc);
-        if(Util.belongsToOpenInterval(Util.hashAdress(fTable.getOldSucc()), localId, Util.hashAdress(newSucc))){
+        if(newSucc != null && Util.belongsToOpenInterval(Util.hashAdress(fTable.getOldSucc()), localId, Util.hashAdress(newSucc))){
             (new FileUpdater(newSucc, this, Util.hashAdress(fTable.getOldSucc()), Util.hashAdress(newSucc), false)).start();
         }
         return true;

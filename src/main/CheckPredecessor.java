@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 
 /**
  * Created by Marco on 04/03/2018.
@@ -21,12 +22,19 @@ public class CheckPredecessor extends Thread{
 
             InetSocketAddress pred = node.getPredAddress();
 
+            boolean isReachable = false;
             try {
-                if(!pred.getAddress().isReachable(3000)){
+                (new Socket(pred.getAddress(), pred.getPort())).close();
+                isReachable = true;
+
+            } catch (IOException e) {
+                isReachable = false;
+            }
+
+            if(!isReachable){
                     node.getAndSetJoinAvailable(false);
                     node.setPredecessor(null);
-                }
-            } catch (IOException e) {}
+            }
 
             try {
                 Thread.sleep(500);
