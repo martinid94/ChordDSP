@@ -42,11 +42,8 @@ public class TestConnection extends Thread{
 
     public void run() {
         RingConnection rc = new RingConnection(serverAddress);
-        try{
-            System.out.println(rc.bootstapRequest(Util.powerOfTwo(3)));
-        }
-        catch (IOException | ClassNotFoundException ioe) {
-            ioe.printStackTrace();
-        }
+        System.out.println(rc.bootstapRequest(Util.powerOfTwo(3)));
+
+
     }
 }

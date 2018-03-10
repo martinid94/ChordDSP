@@ -70,7 +70,7 @@ public class TestFileManager {
                     System.out.println("Read OK!");
                 }
                 else{
-                    fm.write(s, null);
+                    //fm.write(s, null);
                     System.out.println("Write OK!");
                 }
             }
@@ -96,7 +96,7 @@ public class TestFileManager {
 
 
 
-            System.out.println("Remove client1 " + fm.singleRemove());
+            //System.out.println("Remove client1 " + fm.singleRemove());
         }
     }
 
