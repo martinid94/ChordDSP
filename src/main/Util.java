@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Util{
 
-    public static final int m = 160;
+    public static final int m = 8;
 
     /**
      * @param address: node address
@@ -134,7 +134,9 @@ public class Util{
         if(md != null){
             md.reset();
             md.update(hashbytes);
-            result = new BigInteger(1, md.digest());
+            //TODO
+            byte[] bi =  {md.digest()[1]};
+            result = new BigInteger(1,bi);
         }
 
         return result;

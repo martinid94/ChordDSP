@@ -82,7 +82,7 @@ public class FingerTable {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         for(InetSocketAddress ad : table){
-            sb.append(ad.toString());
+            sb.append(ad + "\n");
         }
         return sb.toString();
     }

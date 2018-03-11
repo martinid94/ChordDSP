@@ -14,14 +14,14 @@ public class FixFinger extends Thread {
     }
 
     public void run(){
-        int next = -1;
+        int next = 0;
         while(true){
             next++;
             if(next >= Util.m){
-                next = 0;
+                next = 1;
             }
 
-            InetSocketAddress ith = node.findSuccessor(node.getLocalId().add(Util.powerOfTwo(next)));
+            InetSocketAddress ith = node.findSuccessor(Util.ithStart(next + 1, node.getLocalId()));
             node.getfTable().updateIthFinger(next, ith);
 
             try {
