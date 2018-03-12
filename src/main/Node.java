@@ -229,9 +229,10 @@ public class Node {
                 boolean value = false;
 
                 try {
-                    value = ith.getAddress().isReachable(1000);
+                    (new Socket(ith.getAddress(), ith.getPort())).close();
+                    value = true;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    value = false;
                 }
 
                 if(value){

@@ -44,7 +44,7 @@ public class FingerTable {
 
     public synchronized void deleteNode(InetSocketAddress addr) {
         for (int i = Util.m -1; i >= 0; i--) {
-            InetSocketAddress ithfinger = this.getIthFinger(i);
+            InetSocketAddress ithfinger = table[i];
             if (ithfinger != null && ithfinger.equals(addr)){
                 if(i == 0 && table[i] != null){
                     oldSucc = table[i];

@@ -87,7 +87,7 @@ public class Util{
      */
     public static boolean belongsToInterval(BigInteger id, BigInteger from, BigInteger to){
         boolean value = belongsToOpenInterval(id, from, to);
-        return (value || id == to);
+        return (value || id.equals(to));
     }
 
     /**
