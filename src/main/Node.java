@@ -188,6 +188,13 @@ public class Node {
             if(n.equals(localId)){
                 nAddr = closestPrecedingNode(id);
                 n = Util.hashAdress(nAddr);
+                RingConnection rc = new RingConnection(nAddr);
+
+                succ = rc.addressRequest("GET_SUCC");
+
+                if(succ == null){
+                    return null;
+                }
             }
             else{
 
