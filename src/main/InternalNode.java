@@ -261,7 +261,7 @@ public class InternalNode implements Node{
             return false;
         }
 
-        FileManager fm =files.get(fileName);
+        FileManager fm = files.get(fileName);
         if(fm == null){
             fm = new FileManager(path + fileName);
         }
@@ -272,9 +272,10 @@ public class InternalNode implements Node{
 
             InternalFileConnection fc = new InternalFileConnection(this, predAddress);
 
-            if(!fc.insertFileRequest(fileName, true)){
+            if(!fc.insertFileRequest(fileName)){
+                System.out.println("ok");
                 fc = new InternalFileConnection(this, predAddress);
-                fc.insertFileRequest(fileName, true);
+                fc.insertFileRequest(fileName);
             }
 
         }
@@ -298,9 +299,9 @@ public class InternalNode implements Node{
         RingConnection rc = new RingConnection(pred);
         InternalFileConnection fc = new InternalFileConnection(this, pred);
 
-        if(!fc.deleteFileRequest(fileName, true)){
+        if(!fc.deleteFileRequest(fileName)){
             fc = new InternalFileConnection(this, pred);
-            fc.deleteFileRequest(fileName, true);
+            fc.deleteFileRequest(fileName);
         }
 
         InetSocketAddress predPred = null;
@@ -312,9 +313,9 @@ public class InternalNode implements Node{
 
         fc = new InternalFileConnection(this, predPred);
 
-        if(!fc.deleteFileRequest(fileName, true)){
+        if(!fc.deleteFileRequest(fileName)){
             fc = new InternalFileConnection(this, predPred);
-            fc.deleteFileRequest(fileName, true);
+            fc.deleteFileRequest(fileName);
         }
 
         return value;

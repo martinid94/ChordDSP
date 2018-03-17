@@ -24,9 +24,9 @@ public abstract class Connection {
         ois = null;
     }
 
-    public InetSocketAddress getNodeAddress() {
-        return nodeAddress;
-    }
+//    public InetSocketAddress getNodeAddress() {
+//        return nodeAddress;
+//    }
 
 //    public void setNodeAddress(InetSocketAddress nodeAddress) {
 //        this.nodeAddress = nodeAddress;

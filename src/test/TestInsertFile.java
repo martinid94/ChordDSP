@@ -1,6 +1,8 @@
 package test;
 
 import main.Connection.ExternalFileConnection;
+import main.Connection.RingConnection;
+import main.ExternalNode;
 import main.Util;
 
 import java.math.BigInteger;
@@ -20,12 +22,15 @@ public class TestInsertFile {
 
         BigInteger fileId = Util.hashFile(fileName);
         System.out.println(fileId);
+        RingConnection rc = new RingConnection(n1Soc);
+        InetSocketAddress n = rc.findSuccessorRequest(fileId);
 
 
-        ExternalFileConnection efc = new ExternalFileConnection(n1Soc, fileName);
-//        efc.insertFileRequest(pathFile);
-        efc.getFileRequest(pathFile);
-        System.out.println("ok");
+        ExternalNode mySelf = new ExternalNode(pathFile);
+        ExternalFileConnection efc = new ExternalFileConnection(mySelf, n);
+
+        //efc.getFileRequest(pathFile);
+        System.out.println("Return value: " + efc.insertFileRequest(fileName));
 
     }
 }
