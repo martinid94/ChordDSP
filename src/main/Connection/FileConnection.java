@@ -71,6 +71,8 @@ public class FileConnection extends Connection {
             node.get(s, fileName);
             retVal = ois.readBoolean();
         } catch (IOException e) {
+//            System.out.println("ok \n");
+//            e.printStackTrace();
             retVal = false;
         }
         finally {

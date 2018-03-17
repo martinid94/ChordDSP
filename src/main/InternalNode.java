@@ -273,7 +273,6 @@ public class InternalNode implements Node{
             InternalFileConnection fc = new InternalFileConnection(this, predAddress);
 
             if(!fc.insertFileRequest(fileName)){
-                System.out.println("ok");
                 fc = new InternalFileConnection(this, predAddress);
                 fc.insertFileRequest(fileName);
             }

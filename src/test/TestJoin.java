@@ -36,7 +36,7 @@ public class TestJoin {
         System.out.println(n4.join(n1Soc));
         Thread.sleep(50);
         System.out.println(n5.join(n1Soc));
-        Thread.sleep(30000);
+        Thread.sleep(10000);
         System.out.println("Succ of node1: " + n1.getSuccAddress());
         System.out.println("Succ of node2: " + n2.getSuccAddress());
         System.out.println("Succ of node4: " + n4.getSuccAddress());
