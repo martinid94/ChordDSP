@@ -18,7 +18,7 @@ public class RingConnection extends Connection {
      * @param localId
      * @return invoker's successor in the ring
      */
-    public InetSocketAddress bootstapRequest(BigInteger localId){
+    public InetSocketAddress findSuccessorRequest(BigInteger localId){
         if (localId == null) {
             return null;
         }

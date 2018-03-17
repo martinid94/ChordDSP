@@ -8,14 +8,14 @@ import java.net.Socket;
  * Created by Marco on 24/02/2018.
  */
 public class Listener extends Thread {
-    private Node node;
+    private InternalNode internalNode;
     private ServerSocket ss;
     private boolean isLive;
     //eventuale pool esecutori
 
-    public Listener(Node node){
-        this.node = node;
-        int port = node.getLocalAddress().getPort();
+    public Listener(InternalNode internalNode){
+        this.internalNode = internalNode;
+        int port = internalNode.getLocalAddress().getPort();
 
         try {
             ss = new ServerSocket(port);
@@ -35,7 +35,7 @@ public class Listener extends Thread {
             }
 
             //TODO avviare thread esecutore o eventuale thread nel pool
-            (new Executor(s, node)).start();
+            (new Executor(s, internalNode)).start();
         }
     }
 }

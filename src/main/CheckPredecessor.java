@@ -9,10 +9,10 @@ import java.net.Socket;
  */
 public class CheckPredecessor extends Thread{
 
-    private Node node;
+    private InternalNode internalNode;
 
-    public CheckPredecessor(Node n) {
-        node = n;
+    public CheckPredecessor(InternalNode n) {
+        internalNode = n;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class CheckPredecessor extends Thread{
 
         while(true){
 
-            InetSocketAddress pred = node.getPredAddress();
+            InetSocketAddress pred = internalNode.getPredAddress();
 
             boolean isReachable = false;
             try {
@@ -32,8 +32,8 @@ public class CheckPredecessor extends Thread{
             }
 
             if(!isReachable){
-                    node.getAndSetJoinAvailable(false);
-                    node.setPredecessor(null);
+                    internalNode.getAndSetJoinAvailable(false);
+                    internalNode.setPredecessor(null);
             }
 
             try {

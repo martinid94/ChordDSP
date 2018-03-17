@@ -13,14 +13,14 @@ import java.util.ArrayList;
 public class FileUpdater extends Thread {
 
     private InetSocketAddress contactAddr;
-    private Node node;
+    private InternalNode internalNode;
     private BigInteger from;
     private BigInteger to;
     private boolean isJoin;
 
-    public FileUpdater(InetSocketAddress contact, Node node, BigInteger from, BigInteger to, boolean isJoin){
+    public FileUpdater(InetSocketAddress contact, InternalNode internalNode, BigInteger from, BigInteger to, boolean isJoin){
         contactAddr = contact;
-        this.node = node;
+        this.internalNode = internalNode;
         this.from =from;
         this.to = to;
         this.isJoin = isJoin;
@@ -38,27 +38,27 @@ public class FileUpdater extends Thread {
                 rc.getAndSetAvailabilityRequest(true);
             }
 
-            node.getAndSetJoinAvailable(true);
+            internalNode.getAndSetJoinAvailable(true);
 
-            FileConnection fc = new FileConnection(node, node.getSuccAddress());
-            if(!fc.deleteFilesRequest(Util.hashAdress(node.getPredAddress()), node.getLocalId())){
-                fc.deleteFilesRequest(Util.hashAdress(node.getPredAddress()), node.getLocalId());
+            FileConnection fc = new FileConnection(internalNode, internalNode.getSuccAddress());
+            if(!fc.deleteFilesRequest(Util.hashAdress(internalNode.getPredAddress()), internalNode.getLocalId())){
+                fc.deleteFilesRequest(Util.hashAdress(internalNode.getPredAddress()), internalNode.getLocalId());
             }
 
-            fc = new FileConnection(node, node.getPredAddress());
-            if(!fc.deleteFilesRequest(node.getLocalId(), Util.hashAdress(node.getSuccAddress()))){
-                fc.deleteFilesRequest(node.getLocalId(), Util.hashAdress(node.getSuccAddress()));
+            fc = new FileConnection(internalNode, internalNode.getPredAddress());
+            if(!fc.deleteFilesRequest(internalNode.getLocalId(), Util.hashAdress(internalNode.getSuccAddress()))){
+                fc.deleteFilesRequest(internalNode.getLocalId(), Util.hashAdress(internalNode.getSuccAddress()));
             }
         }else{
 
-            node.getAndSetJoinAvailable(true);
+            internalNode.getAndSetJoinAvailable(true);
         }
 
     }
 
     private boolean update(){
 
-        FileConnection fc = new FileConnection(node, contactAddr);
+        FileConnection fc = new FileConnection(internalNode, contactAddr);
         ArrayList<String> fileToGet = fc.fileIntervalRequest(from, to);
 
         if(fileToGet == null){

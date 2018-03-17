@@ -2,10 +2,9 @@ package test;
 
 import main.Connection.RingConnection;
 import main.Listener;
-import main.Node;
+import main.InternalNode;
 import main.Util;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -30,7 +29,7 @@ public class TestConnection extends Thread{
             e.printStackTrace();
         }
 
-        Listener l = new Listener(new Node(serverAddress));
+        Listener l = new Listener(new InternalNode(serverAddress, "C:\\Users\\Marco\\Desktop\\Client2\\"));
         l.start();
 
         TestConnection t1 = new TestConnection(serverAddress);
@@ -42,7 +41,7 @@ public class TestConnection extends Thread{
 
     public void run() {
         RingConnection rc = new RingConnection(serverAddress);
-        System.out.println(rc.bootstapRequest(Util.powerOfTwo(3)));
+        System.out.println(rc.findSuccessorRequest(Util.powerOfTwo(3)));
 
 
     }

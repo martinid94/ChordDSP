@@ -7,10 +7,10 @@ import java.net.InetSocketAddress;
  */
 public class FixFinger extends Thread {
 
-    private Node node;
+    private InternalNode internalNode;
 
-    public FixFinger(Node n){
-        node = n;
+    public FixFinger(InternalNode n){
+        internalNode = n;
     }
 
     public void run(){
@@ -21,8 +21,8 @@ public class FixFinger extends Thread {
                 next = 1;
             }
 
-            InetSocketAddress ith = node.findSuccessor(Util.ithStart(next + 1, node.getLocalId()));
-            node.getfTable().updateIthFinger(next, ith);
+            InetSocketAddress ith = internalNode.findSuccessor(Util.ithStart(next + 1, internalNode.getLocalId()));
+            internalNode.getfTable().updateIthFinger(next, ith);
 
             try {
                 Thread.sleep(50);

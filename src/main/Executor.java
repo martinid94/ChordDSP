@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * Created by Marco on 24/02/2018.
@@ -14,16 +13,16 @@ import java.util.ArrayList;
 public class Executor extends Thread{
 
     private Socket sock;
-    private Node node;
+    private InternalNode internalNode;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
-    public Executor(Socket s, Node n){
+    public Executor(Socket s, InternalNode n){
         if(s == null || n == null){
             throw new IllegalArgumentException();
         }
         sock = s;
-        this.node = n;
+        this.internalNode = n;
         oos = null;
         ois = null;
     }
@@ -126,7 +125,7 @@ public class Executor extends Thread{
             return;
         }
 
-        InetSocketAddress successor = node.findSuccessor(id); //new InetSocketAddress(InetAddress.getByName("192.168.1.3"), 4544);
+        InetSocketAddress successor = internalNode.findSuccessor(id); //new InetSocketAddress(InetAddress.getByName("192.168.1.3"), 4544);
         oos.writeObject(successor);
         oos.flush();
     }
@@ -135,17 +134,17 @@ public class Executor extends Thread{
 
         InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
         //joinAvailable variable is set to false in the if condition: a join operation can be performed now
-        if(newPred == null || !node.getAndSetJoinAvailable(false)){
+        if(newPred == null || !internalNode.getAndSetJoinAvailable(false)){
             //respond with message error
             oos.writeObject(null);
             oos.flush();
             return;
         }
 
-        InetSocketAddress pred = node.getPredAddress();
-        oos.writeObject(node.getPredAddress());
+        InetSocketAddress pred = internalNode.getPredAddress();
+        oos.writeObject(internalNode.getPredAddress());
         if(pred != null){
-            node.setPredecessor(newPred);
+            internalNode.setPredecessor(newPred);
         }
 
         oos.flush();
@@ -153,13 +152,13 @@ public class Executor extends Thread{
 
     private void getSuccessor() throws IOException {
 
-        oos.writeObject(node.getSuccAddress());
+        oos.writeObject(internalNode.getSuccAddress());
         oos.flush();
     }
 
     private void getPredecessor() throws IOException {
 
-        oos.writeObject(node.getPredAddress());
+        oos.writeObject(internalNode.getPredAddress());
         oos.flush();
     }
 
@@ -172,7 +171,7 @@ public class Executor extends Thread{
             return;
         }
 
-        oos.writeObject(node.closestPrecedingNode(id));
+        oos.writeObject(internalNode.closestPrecedingNode(id));
         oos.flush();
     }
 
@@ -180,7 +179,7 @@ public class Executor extends Thread{
 
         boolean valueAvailable = (boolean) ois.readObject();
 
-        oos.writeObject(node.getAndSetJoinAvailable(valueAvailable));
+        oos.writeObject(internalNode.getAndSetJoinAvailable(valueAvailable));
         oos.flush();
     }
 
@@ -194,7 +193,7 @@ public class Executor extends Thread{
             return;
         }
 
-        oos.writeObject(node.setSuccessor(newSucc));
+        oos.writeObject(internalNode.setSuccessor(newSucc));
         oos.flush();
     }
 
@@ -202,14 +201,14 @@ public class Executor extends Thread{
 
         InetSocketAddress newPred = (InetSocketAddress) ois.readObject();
 
-        if(node.getPredAddress() != null && node.getPredAddress().equals(newPred)){
+        if(internalNode.getPredAddress() != null && internalNode.getPredAddress().equals(newPred)){
             oos.writeObject(true);
             oos.flush();
             return;
         }
         //joinAvailable variable is set to false in the if condition: after changing predecessor,
         // no join is available since files must be updated
-        if(newPred == null){ // || !node.getAndSetJoinAvailable(false)
+        if(newPred == null){ // || !internalNode.getAndSetJoinAvailable(false)
             //respond with false
             oos.writeObject(false);
             oos.flush();
@@ -217,17 +216,17 @@ public class Executor extends Thread{
         }
 
 
-        oos.writeObject(node.setPredecessor(newPred));
+        oos.writeObject(internalNode.setPredecessor(newPred));
         oos.flush();
     }
 
     private void getFile() throws  IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
-        if(node.hasFile(fileName)) {
+        if(internalNode.hasFile(fileName)) {
             oos.writeBoolean(true); //file found
             oos.flush();
 
-            node.get(sock, fileName);
+            internalNode.get(sock, fileName);
         }
         else{
             oos.writeBoolean(false); //file not found
@@ -239,33 +238,33 @@ public class Executor extends Thread{
         BigInteger from = (BigInteger) ois.readObject();
         BigInteger to = (BigInteger) ois.readObject();
 
-        oos.writeObject(node.getFilesInterval(from, to));
+        oos.writeObject(internalNode.getFilesInterval(from, to));
     }
 
     private void insertFile() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
 
-        oos.writeBoolean(node.insertFile(sock, fileName)); //files map is updated by insertFile method
+        oos.writeBoolean(internalNode.insertFile(sock, fileName)); //files map is updated by insertFile method
         oos.flush();
     }
 
     private void insertReplica() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
-        oos.writeBoolean(node.singleInsert(sock, fileName)); //files map is updated by singleInsert method
+        oos.writeBoolean(internalNode.singleInsert(sock, fileName)); //files map is updated by singleInsert method
         oos.flush();
     }
 
     private void deleteFile() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
 
-        oos.writeBoolean(node.delete(fileName)); //files map is updated by delete method
+        oos.writeBoolean(internalNode.delete(fileName)); //files map is updated by delete method
         oos.flush();
     }
 
     private void deleteReplica() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
 
-        oos.writeBoolean(node.singleDelete(fileName)); //files map is updated by singleDelete method
+        oos.writeBoolean(internalNode.singleDelete(fileName)); //files map is updated by singleDelete method
         oos.flush();
     }
 
@@ -273,12 +272,12 @@ public class Executor extends Thread{
         BigInteger from = (BigInteger) ois.readObject();
         BigInteger to = (BigInteger) ois.readObject();
 
-        oos.writeBoolean(node.deleteFilesInterval(from, to)); //files map is updated by deleteFilesInterval method
+        oos.writeBoolean(internalNode.deleteFilesInterval(from, to)); //files map is updated by deleteFilesInterval method
     }
 
     private void hasFile() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
 
-        oos.writeBoolean(node.hasFile(fileName));
+        oos.writeBoolean(internalNode.hasFile(fileName));
     }
 }

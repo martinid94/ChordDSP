@@ -28,9 +28,9 @@ public abstract class Connection {
         return nodeAddress;
     }
 
-    public void setNodeAddress(InetSocketAddress nodeAddress) {
-        this.nodeAddress = nodeAddress;
-    }
+//    public void setNodeAddress(InetSocketAddress nodeAddress) {
+//        this.nodeAddress = nodeAddress;
+//    }
 
     /**
      * Method to start a connection

@@ -11,10 +11,10 @@ import java.net.Socket;
  */
 public class Stabilizer extends Thread {
 
-    private Node node;
+    private InternalNode internalNode;
 
-    public Stabilizer(Node n) {
-        node = n;
+    public Stabilizer(InternalNode n) {
+        internalNode = n;
     }
 
     @Override
@@ -22,9 +22,9 @@ public class Stabilizer extends Thread {
 
         while(true){
 
-            InetSocketAddress succ = node.getSuccAddress();
+            InetSocketAddress succ = internalNode.getSuccAddress();
             if(succ == null){
-                node.getfTable().fillSuccessor(node.getLocalAddress());
+                internalNode.getfTable().fillSuccessor(internalNode.getLocalAddress());
             }
 
             boolean isReachable = false;
@@ -37,11 +37,11 @@ public class Stabilizer extends Thread {
             }
 
             if(!isReachable){
-                node.getfTable().deleteNode(succ);
-                node.getfTable().fillSuccessor(node.getLocalAddress());
+                internalNode.getfTable().deleteNode(succ);
+                internalNode.getfTable().fillSuccessor(internalNode.getLocalAddress());
             }
 
-            succ = node.getSuccAddress();
+            succ = internalNode.getSuccAddress();
             RingConnection rc = new RingConnection(succ);
 //            InetSocketAddress predSucc = rc.addressRequest("GET_PRED");
 //
@@ -51,7 +51,7 @@ public class Stabilizer extends Thread {
 //            }
 
             //notify
-            rc.setPredecessorRequest(node.getLocalAddress());
+            rc.setPredecessorRequest(internalNode.getLocalAddress());
 
 
             try {

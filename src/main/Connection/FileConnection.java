@@ -1,23 +1,22 @@
 package main.Connection;
 
-import main.Node;
+import main.InternalNode;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 
 /**
  * Created by Davide on 25/02/2018.
  */
-public class FileConnection  extends Connection{
-    private Node localNode;
+public class FileConnection extends Connection{
+    private InternalNode localInternalNode;
     private RingConnection rc;
 
-    public FileConnection(Node n, InetSocketAddress nodeAd){
+    public FileConnection(InternalNode n, InetSocketAddress nodeAd){
         super(nodeAd);
-        localNode = n;
+        localInternalNode = n;
         rc = new RingConnection(nodeAd);
     }
 
@@ -40,7 +39,7 @@ public class FileConnection  extends Connection{
                 nodeAddress = newContact;
             }
             else {
-                retVal = localNode.singleInsert(s, fileName);
+                retVal = localInternalNode.singleInsert(s, fileName);
             }
         } catch (IOException e) {
             retVal = false;
@@ -63,7 +62,7 @@ public class FileConnection  extends Connection{
 
             boolean hasFile = ois.readBoolean();
             if(hasFile) {
-                retVal = localNode.singleInsert(s, fileName);
+                retVal = localInternalNode.singleInsert(s, fileName);
             }
         } catch (IOException e) {
             retVal = false;
@@ -115,7 +114,7 @@ public class FileConnection  extends Connection{
             oos.writeObject(fileName);
             oos.flush();
 
-            localNode.get(s, fileName);
+            localInternalNode.get(s, fileName);
             retVal = ois.readBoolean();
         } catch (IOException e) {
             retVal = false;
