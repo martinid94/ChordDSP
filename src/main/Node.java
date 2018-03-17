@@ -7,8 +7,6 @@ import java.net.Socket;
  */
 public interface Node {
 
-
     boolean singleInsert(Socket s, String fileName);
     boolean get(Socket s, String fileName);
-    boolean singleDelete(String fileName);
 }
