@@ -13,11 +13,19 @@ public class ExternalNode implements Node {
     }
 
     public boolean singleInsert(Socket s, String fileName){
+        if(s == null || fileName == null || fileName.equals("")){
+            return false;
+        }
+
         FileManager fm = new FileManager(path + fileName);
         return fm.write(s);
     }
 
     public boolean get(Socket s, String fileName){
+        if(s == null || fileName == null || fileName.equals("")){
+            return false;
+        }
+
         FileManager fm = new FileManager(path + fileName);
         return fm.read(s);
     }
