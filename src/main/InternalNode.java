@@ -1,6 +1,6 @@
 package main;
 
-import main.Connection.FileConnection;
+import main.Connection.InternalFileConnection;
 import main.Connection.RingConnection;
 
 import java.io.IOException;
@@ -270,10 +270,10 @@ public class InternalNode implements Node{
         if(value){
             files.put(fileName, fm);
 
-            FileConnection fc = new FileConnection(this, predAddress);
+            InternalFileConnection fc = new InternalFileConnection(this, predAddress);
 
             if(!fc.insertFileRequest(fileName, true)){
-                fc = new FileConnection(this, predAddress);
+                fc = new InternalFileConnection(this, predAddress);
                 fc.insertFileRequest(fileName, true);
             }
 
@@ -296,10 +296,10 @@ public class InternalNode implements Node{
 
         InetSocketAddress pred = predAddress;
         RingConnection rc = new RingConnection(pred);
-        FileConnection fc = new FileConnection(this, pred);
+        InternalFileConnection fc = new InternalFileConnection(this, pred);
 
         if(!fc.deleteFileRequest(fileName, true)){
-            fc = new FileConnection(this, pred);
+            fc = new InternalFileConnection(this, pred);
             fc.deleteFileRequest(fileName, true);
         }
 
@@ -310,10 +310,10 @@ public class InternalNode implements Node{
             return value;
         }
 
-        fc = new FileConnection(this, predPred);
+        fc = new InternalFileConnection(this, predPred);
 
         if(!fc.deleteFileRequest(fileName, true)){
-            fc = new FileConnection(this, predPred);
+            fc = new InternalFileConnection(this, predPred);
             fc.deleteFileRequest(fileName, true);
         }
 

@@ -1,6 +1,6 @@
 package main;
 
-import main.Connection.FileConnection;
+import main.Connection.InternalFileConnection;
 import main.Connection.RingConnection;
 
 import java.math.BigInteger;
@@ -40,12 +40,12 @@ public class FileUpdater extends Thread {
 
             internalNode.getAndSetJoinAvailable(true);
 
-            FileConnection fc = new FileConnection(internalNode, internalNode.getSuccAddress());
+            InternalFileConnection fc = new InternalFileConnection(internalNode, internalNode.getSuccAddress());
             if(!fc.deleteFilesRequest(Util.hashAdress(internalNode.getPredAddress()), internalNode.getLocalId())){
                 fc.deleteFilesRequest(Util.hashAdress(internalNode.getPredAddress()), internalNode.getLocalId());
             }
 
-            fc = new FileConnection(internalNode, internalNode.getPredAddress());
+            fc = new InternalFileConnection(internalNode, internalNode.getPredAddress());
             if(!fc.deleteFilesRequest(internalNode.getLocalId(), Util.hashAdress(internalNode.getSuccAddress()))){
                 fc.deleteFilesRequest(internalNode.getLocalId(), Util.hashAdress(internalNode.getSuccAddress()));
             }
@@ -58,7 +58,7 @@ public class FileUpdater extends Thread {
 
     private boolean update(){
 
-        FileConnection fc = new FileConnection(internalNode, contactAddr);
+        InternalFileConnection fc = new InternalFileConnection(internalNode, contactAddr);
         ArrayList<String> fileToGet = fc.fileIntervalRequest(from, to);
 
         if(fileToGet == null){

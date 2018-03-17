@@ -10,11 +10,11 @@ import java.util.ArrayList;
 /**
  * Created by Davide on 25/02/2018.
  */
-public class FileConnection extends Connection{
+public class InternalFileConnection extends Connection{
     private InternalNode localInternalNode;
     private RingConnection rc;
 
-    public FileConnection(InternalNode n, InetSocketAddress nodeAd){
+    public InternalFileConnection(InternalNode n, InetSocketAddress nodeAd){
         super(nodeAd);
         localInternalNode = n;
         rc = new RingConnection(nodeAd);

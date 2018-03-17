@@ -1,8 +1,6 @@
 package test;
 
 import main.Connection.ExternalFileConnection;
-import main.Connection.FileConnection;
-import main.Connection.RingConnection;
 import main.Util;
 
 import java.math.BigInteger;
