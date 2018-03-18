@@ -244,14 +244,12 @@ public class Executor extends Thread{
     private void insertFile() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
 
-        oos.writeBoolean(internalNode.insertFile(sock, fileName)); //files map is updated by insertFile method
-        oos.flush();
+        internalNode.insertFile(sock, fileName); //files map is updated by insertFile method
     }
 
     private void insertReplica() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
-        oos.writeBoolean(internalNode.singleInsert(sock, fileName)); //files map is updated by singleInsert method
-        oos.flush();
+        internalNode.singleInsert(sock, fileName); //files map is updated by singleInsert method
     }
 
     private void deleteFile() throws IOException, ClassNotFoundException {

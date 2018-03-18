@@ -62,8 +62,10 @@ public class FileManager extends File {
             bos = new BufferedOutputStream(fos);
             int readBytes = 0;
 
-            while ((readBytes = bis.read(buffer)) != -1)
+            while ((readBytes = bis.read(buffer)) != -1){
                 bos.write(buffer, 0, readBytes);
+            }
+
 
             value = true;
         } catch (IOException e) {
@@ -99,8 +101,10 @@ public class FileManager extends File {
             bis = new BufferedInputStream(fis);
             bos = new BufferedOutputStream(os);
             int readBytes = 0;
-            while ((readBytes = bis.read(buffer)) != -1)
+            while ((readBytes = bis.read(buffer)) != -1){
                 bos.write(buffer, 0, readBytes);
+            }
+
 
             value = true;
         } catch (IOException e) {

@@ -24,8 +24,12 @@ public class CheckPredecessor extends Thread{
 
             boolean isReachable = false;
             try {
-                (new Socket(pred.getAddress(), pred.getPort())).close();
-                isReachable = true;
+                if(pred == null){
+                    isReachable = false;
+                }else{
+                    (new Socket(pred.getAddress(), pred.getPort())).close();
+                    isReachable = true;
+                }
 
             } catch (IOException e) {
                 isReachable = false;

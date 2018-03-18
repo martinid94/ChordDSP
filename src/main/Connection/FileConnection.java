@@ -68,11 +68,8 @@ public class FileConnection extends Connection {
             oos.writeObject(fileName);
             oos.flush();
 
-            node.get(s, fileName);
-            retVal = ois.readBoolean();
+            retVal = node.get(s, fileName);
         } catch (IOException e) {
-//            System.out.println("ok \n");
-//            e.printStackTrace();
             retVal = false;
         }
         finally {

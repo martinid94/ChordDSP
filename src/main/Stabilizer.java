@@ -29,8 +29,13 @@ public class Stabilizer extends Thread {
 
             boolean isReachable = false;
             try {
-                (new Socket(succ.getAddress(), succ.getPort())).close();
-                isReachable = true;
+                if(succ == null){
+                    isReachable = false;
+                }
+                else{
+                    (new Socket(succ.getAddress(), succ.getPort())).close();
+                    isReachable = true;
+                }
 
             } catch (IOException e) {
                 isReachable = false;
