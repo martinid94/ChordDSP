@@ -26,6 +26,8 @@ public class TestNodeCrash {
         System.out.println("Pred of node5: " + n5.getPredAddress());
 
         System.out.println("Finger Table node5 ---------------------------------\n" + n5.getfTable());
+//        Thread.sleep(10000);
+//        System.out.println("leave: " + n5.leave());
 
 //        InetSocketAddress n3Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 6112);
 //

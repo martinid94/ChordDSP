@@ -61,24 +61,42 @@ public class TestJoin {
         System.out.println("Finger Table node3 ---------------------------------\n" + n3.getfTable());
         //System.out.println("Finger Table node5 ---------------------------------\n" + n5.getfTable());
         System.out.println("Finger Table node6 ---------------------------------\n" + n6.getfTable());
-//        Thread.sleep(30000);
-//        System.out.println("Succ of node1: " + n1.getSuccAddress());
-//        System.out.println("Succ of node2: " + n2.getSuccAddress());
-//
-//        System.out.println("Succ of node4: " + n4.getSuccAddress());
-//        System.out.println("Succ of node5: " + n5.getSuccAddress());
-//        System.out.println("Pred of node1: " + n1.getPredAddress());
-//        System.out.println("Pred of node2: " + n2.getPredAddress());
-//        System.out.println("Pred of node4: " + n4.getPredAddress());
-//        System.out.println("Pred of node5: " + n5.getPredAddress());
-//        System.out.println("Succ of node6: " + n6.getSuccAddress());
-//        System.out.println("Pred of node6: " + n6.getPredAddress());
-//
-//        System.out.println("Finger Table node1 ---------------------------------\n" + n1.getfTable());
-//        System.out.println("Finger Table node2 ---------------------------------\n" + n2.getfTable());
-//        System.out.println("Finger Table node4 ---------------------------------\n" + n4.getfTable());
-//        System.out.println("Finger Table node5 ---------------------------------\n" + n5.getfTable());
-//        System.out.println("Finger Table node6 ---------------------------------\n" + n6.getfTable());
+        Thread.sleep(20000);
+        System.out.println("Succ of node1: " + n1.getSuccAddress());
+        System.out.println("Succ of node2: " + n2.getSuccAddress());
+
+        System.out.println("Succ of node4: " + n4.getSuccAddress());
+        System.out.println("Succ of node3: " + n3.getSuccAddress());
+        System.out.println("Pred of node1: " + n1.getPredAddress());
+        System.out.println("Pred of node2: " + n2.getPredAddress());
+        System.out.println("Pred of node4: " + n4.getPredAddress());
+        System.out.println("Pred of node3: " + n3.getPredAddress());
+        System.out.println("Succ of node6: " + n6.getSuccAddress());
+        System.out.println("Pred of node6: " + n6.getPredAddress());
+
+        System.out.println("Finger Table node1 ---------------------------------\n" + n1.getfTable());
+        System.out.println("Finger Table node2 ---------------------------------\n" + n2.getfTable());
+        System.out.println("Finger Table node4 ---------------------------------\n" + n4.getfTable());
+        System.out.println("Finger Table node3 ---------------------------------\n" + n3.getfTable());
+        System.out.println("Finger Table node6 ---------------------------------\n" + n6.getfTable());
+        Thread.sleep(20000);
+        System.out.println("Succ of node1: " + n1.getSuccAddress());
+        System.out.println("Succ of node2: " + n2.getSuccAddress());
+
+        System.out.println("Succ of node4: " + n4.getSuccAddress());
+        System.out.println("Succ of node3: " + n3.getSuccAddress());
+        System.out.println("Pred of node1: " + n1.getPredAddress());
+        System.out.println("Pred of node2: " + n2.getPredAddress());
+        System.out.println("Pred of node4: " + n4.getPredAddress());
+        System.out.println("Pred of node3: " + n3.getPredAddress());
+        System.out.println("Succ of node6: " + n6.getSuccAddress());
+        System.out.println("Pred of node6: " + n6.getPredAddress());
+
+        System.out.println("Finger Table node1 ---------------------------------\n" + n1.getfTable());
+        System.out.println("Finger Table node2 ---------------------------------\n" + n2.getfTable());
+        System.out.println("Finger Table node4 ---------------------------------\n" + n4.getfTable());
+        System.out.println("Finger Table node3 ---------------------------------\n" + n3.getfTable());
+        System.out.println("Finger Table node6 ---------------------------------\n" + n6.getfTable());
 
 
 

@@ -23,9 +23,9 @@ public class Stabilizer extends Thread {
         while(true){
 
             InetSocketAddress succ = internalNode.getSuccAddress();
-            if(succ == null){
-                internalNode.getfTable().fillSuccessor(internalNode.getLocalAddress());
-            }
+//            if(succ == null){
+//                internalNode.getfTable().fillSuccessor(internalNode.getLocalAddress());
+//            }
 
             boolean isReachable = false;
             try {
@@ -43,11 +43,16 @@ public class Stabilizer extends Thread {
 
             if(!isReachable){
                 internalNode.getfTable().deleteNode(succ);
-                internalNode.getfTable().fillSuccessor(internalNode.getLocalAddress());
+                internalNode.getfTable().fillSuccessor(internalNode);
+                succ = internalNode.getSuccAddress();
+                //TODO
+                internalNode.setSuccessor(succ);
+                RingConnection rc = new RingConnection(succ);
+                //notify
+                rc.setPredecessorRequest(internalNode.getLocalAddress());
             }
 
-            succ = internalNode.getSuccAddress();
-            RingConnection rc = new RingConnection(succ);
+
 //            InetSocketAddress predSucc = rc.addressRequest("GET_PRED");
 //
 //            //bad connection
@@ -55,8 +60,6 @@ public class Stabilizer extends Thread {
 //                continue;
 //            }
 
-            //notify
-            rc.setPredecessorRequest(internalNode.getLocalAddress());
 
 
             try {
