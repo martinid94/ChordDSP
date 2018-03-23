@@ -1,11 +1,10 @@
-package main.Connection;
+package main.connection;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.InputMismatchException;
 
 /**
  * Created by Davide on 24/02/2018.

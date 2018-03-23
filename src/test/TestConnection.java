@@ -1,8 +1,8 @@
 package test;
 
-import main.Connection.RingConnection;
-import main.Listener;
-import main.InternalNode;
+import main.connection.RingConnection;
+import main.thread.Listener;
+import main.node.InternalNode;
 import main.Util;
 
 import java.net.InetAddress;

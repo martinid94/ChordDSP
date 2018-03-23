@@ -1,6 +1,6 @@
-package main.Connection;
+package main.connection;
 
-import main.InternalNode;
+import main.node.InternalNode;
 
 import java.io.IOException;
 import java.math.BigInteger;

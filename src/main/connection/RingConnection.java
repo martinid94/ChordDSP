@@ -1,4 +1,4 @@
-package main.Connection;
+package main.connection;
 
 import java.io.*;
 import java.math.BigInteger;

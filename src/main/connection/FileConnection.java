@@ -1,7 +1,7 @@
-package main.Connection;
+package main.connection;
 
-import main.ExternalNode;
-import main.Node;
+import main.node.ExternalNode;
+import main.node.Node;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

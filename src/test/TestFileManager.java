@@ -1,6 +1,6 @@
 package test;
 
-import main.FileManager;
+import main.node.FileManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;

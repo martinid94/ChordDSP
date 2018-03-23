@@ -1,6 +1,6 @@
 package test;
 
-import main.FingerTable;
+import main.node.FingerTable;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

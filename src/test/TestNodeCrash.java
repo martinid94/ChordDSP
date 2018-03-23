@@ -1,6 +1,6 @@
 package test;
 
-import main.InternalNode;
+import main.node.InternalNode;
 import main.Util;
 
 import java.net.InetAddress;
@@ -12,7 +12,7 @@ import java.net.InetSocketAddress;
 public class TestNodeCrash {
     public static void main(String[] args) throws Exception {
 
-        InetSocketAddress n5Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 7812);
+        InetSocketAddress n5Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 5000);
 
         InternalNode n5 = new InternalNode(n5Soc, "C:\\Users\\Marco\\Desktop\\Client2\\");
         System.out.println("Position node5: " + Util.keyPosition(Util.hashAdress(n5Soc)) + " id: " + n5.getLocalId());
@@ -25,8 +25,11 @@ public class TestNodeCrash {
         System.out.println("Succ of node5: " + n5.getSuccAddress());
         System.out.println("Pred of node5: " + n5.getPredAddress());
 
-        System.out.println("Finger Table node5 ---------------------------------\n" + n5.getfTable());
-//        Thread.sleep(10000);
+        Thread.sleep(10000);
+        System.out.println("leave: " + n5.leave());
+
+//        System.out.println("Finger Table node5 ---------------------------------\n" + n5.getfTable());
+//        thread.sleep(10000);
 //        System.out.println("leave: " + n5.leave());
 
 //        InetSocketAddress n3Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 6112);
@@ -38,7 +41,7 @@ public class TestNodeCrash {
 //        System.out.println(n3.join(n1Soc));
 //
 //
-//        Thread.sleep(5000);
+//        thread.sleep(5000);
 //        System.out.println("Succ of node3: " + n3.getSuccAddress());
 //        System.out.println("Pred of node3: " + n3.getPredAddress());
 //

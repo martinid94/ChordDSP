@@ -1,4 +1,4 @@
-package main;
+package main.node;
 
 import java.net.Socket;
 

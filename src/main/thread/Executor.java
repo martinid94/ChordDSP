@@ -1,4 +1,6 @@
-package main;
+package main.thread;
+
+import main.node.InternalNode;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

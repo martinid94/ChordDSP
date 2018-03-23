@@ -1,11 +1,10 @@
 package test;
 
-import main.Connection.ExternalFileConnection;
-import main.Connection.RingConnection;
-import main.ExternalNode;
+import main.connection.ExternalFileConnection;
+import main.connection.RingConnection;
+import main.node.ExternalNode;
 import main.Util;
 
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
@@ -26,11 +25,11 @@ public class TestInsertFile {
 
         ExternalNode mySelf = new ExternalNode(pathFile);
 
-        System.out.println(fileName1 + " hash: " + Util.hashFile(fileName1));
-        System.out.println(fileName2 + " hash: " + Util.hashFile(fileName2));
-        System.out.println(fileName3 + " hash: " + Util.hashFile(fileName3));
-        System.out.println(fileName4 + " hash: " + Util.hashFile(fileName4));
-        System.out.println(fileName5 + " hash: " + Util.hashFile(fileName5));
+        System.out.println(fileName1 + " position: " + Util.keyPosition(Util.hashFile(fileName1)) + " hash: " + Util.hashFile(fileName1));
+        System.out.println(fileName2 + " position: " + Util.keyPosition(Util.hashFile(fileName2)) + " hash: " + Util.hashFile(fileName2));
+        System.out.println(fileName3 + " position: " + Util.keyPosition(Util.hashFile(fileName3)) + " hash: " + Util.hashFile(fileName3));
+        System.out.println(fileName4 + " position: " + Util.keyPosition(Util.hashFile(fileName4)) + " hash: " + Util.hashFile(fileName4));
+        System.out.println(fileName5 + " position: " + Util.keyPosition(Util.hashFile(fileName5)) + " hash: " + Util.hashFile(fileName5));
 
         RingConnection rc = new RingConnection(n1Soc);
         InetSocketAddress n = rc.findSuccessorRequest(Util.hashFile(fileName1));

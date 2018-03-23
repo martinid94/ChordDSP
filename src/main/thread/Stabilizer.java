@@ -1,6 +1,7 @@
-package main;
+package main.thread;
 
-import main.Connection.RingConnection;
+import main.connection.RingConnection;
+import main.node.InternalNode;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

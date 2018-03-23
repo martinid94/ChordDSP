@@ -1,7 +1,9 @@
-package main;
+package main.thread;
 
-import main.Connection.InternalFileConnection;
-import main.Connection.RingConnection;
+import main.connection.InternalFileConnection;
+import main.connection.RingConnection;
+import main.node.InternalNode;
+import main.Util;
 
 import java.math.BigInteger;
 import java.net.InetSocketAddress;

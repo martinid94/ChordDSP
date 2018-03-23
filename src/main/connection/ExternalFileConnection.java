@@ -1,6 +1,6 @@
-package main.Connection;
+package main.connection;
 
-import main.Node;
+import main.node.Node;
 
 import java.net.InetSocketAddress;
 

@@ -1,7 +1,9 @@
-package main;
+package main.node;
 
-import main.Connection.InternalFileConnection;
-import main.Connection.RingConnection;
+import main.Util;
+import main.connection.InternalFileConnection;
+import main.connection.RingConnection;
+import main.thread.*;
 
 import java.io.IOException;
 import java.math.BigInteger;

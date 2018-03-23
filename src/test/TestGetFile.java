@@ -1,8 +1,8 @@
 package test;
 
-import main.Connection.ExternalFileConnection;
-import main.Connection.RingConnection;
-import main.ExternalNode;
+import main.connection.ExternalFileConnection;
+import main.connection.RingConnection;
+import main.node.ExternalNode;
 import main.Util;
 
 import java.math.BigInteger;
@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
 public class TestGetFile {
 
     public static void main(String[] args) throws Exception {
-        InetSocketAddress n1Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 4444);
+        InetSocketAddress n1Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 5712);
 
         String pathFile = "C:\\Users\\Marco\\Desktop\\Client1\\";
         String fileName = "prova.pdf";
