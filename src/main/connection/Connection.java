@@ -16,6 +16,10 @@ public abstract class Connection {
     protected ObjectOutputStream oos;
     protected ObjectInputStream ois;
 
+    /**
+     * Unique constructor of the class
+     * @param nodeAd specifies the address of the node we want to contact
+     */
     public Connection(InetSocketAddress nodeAd){
         nodeAddress = nodeAd;
         s = null;
@@ -23,16 +27,8 @@ public abstract class Connection {
         ois = null;
     }
 
-//    public InetSocketAddress getNodeAddress() {
-//        return nodeAddress;
-//    }
-
-//    public void setNodeAddress(InetSocketAddress nodeAddress) {
-//        this.nodeAddress = nodeAddress;
-//    }
-
     /**
-     * Method to start a connection
+     * Method to start a connection with a node
      * @throws IOException
      */
     protected void startConnection() throws  IOException, IllegalArgumentException {
@@ -45,7 +41,7 @@ public abstract class Connection {
     }
 
     /**
-     * Method to close a connection
+     * Method to close a connection with a node
      * @throws IOException
      */
     protected void closeConnection() throws IOException {
