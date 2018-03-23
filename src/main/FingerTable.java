@@ -26,7 +26,7 @@ public class FingerTable {
         if(i < 0 || i >= Util.m){
             throw new IllegalArgumentException();
         }
-        if(i == 0 && table[i] != null){
+        if(i == 0 && table[i] != null && !table[i].equals(node)){
             oldSucc = table[i];
         }
         table[i] = node;
