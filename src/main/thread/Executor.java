@@ -12,7 +12,7 @@ import java.net.Socket;
 /**
  * Created by Marco on 24/02/2018.
  */
-public class Executor extends Thread{
+public class Executor implements Runnable{
 
     private Socket sock;
     private InternalNode internalNode;
