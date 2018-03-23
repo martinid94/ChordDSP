@@ -441,15 +441,8 @@ public class InternalNode implements Node{
     }
 
     public boolean setSuccessor(InetSocketAddress newSucc){
-        //TODO
-        if(Util.keyPosition(localId) == 56){
-            System.out.println("ok " + newSucc);
-        }
         fTable.updateIthFinger(0, newSucc);
         if(newSucc != null && Util.belongsToOpenInterval(Util.hashAdress(fTable.getOldSucc()), localId, Util.hashAdress(newSucc))){
-//            if(Util.keyPosition(localId) == 56){
-//                System.out.println("ok2");
-//            }
             (new FileUpdater(newSucc, this, Util.hashAdress(fTable.getOldSucc()), Util.hashAdress(newSucc), false)).start();
         }
         return true;

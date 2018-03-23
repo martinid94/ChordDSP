@@ -45,7 +45,6 @@ public class Stabilizer extends Thread {
                 internalNode.getfTable().deleteNode(succ);
                 internalNode.getfTable().fillSuccessor(internalNode);
                 succ = internalNode.getSuccAddress();
-                //TODO
                 internalNode.setSuccessor(succ);
                 RingConnection rc = new RingConnection(succ);
                 //notify
