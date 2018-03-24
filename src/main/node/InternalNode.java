@@ -231,28 +231,31 @@ public class InternalNode implements Node{
             return localAddress;
         }
 
-        //until id does not belong to (n, succ] cycle changing
+        //until id does not belong to (n, succ] cycle
         while(!Util.belongsToInterval(id, n, Util.hashAdress(succ))){
 
             if(n.equals(localId)){
+                //compute with local information the closest preceding node of id
                 nAddr = closestPrecedingNode(id);
+                //update n
                 n = Util.hashAdress(nAddr);
                 RingConnection rc = new RingConnection(nAddr);
-
+                //update succ
                 succ = rc.addressRequest("GET_SUCC");
 
                 if(succ == null){
+                    //something bad happened
                     return null;
                 }
             }
             else{
-
+                //send to nAddr the request to compute the closest preceding node of id
                 RingConnection rc = new RingConnection(nAddr);
                 InetSocketAddress temp = null;
                 temp = rc.closestRequest(id);
 
-
                 if(temp == null){
+                    //something bad happened
                     return null;
                 }
                 else if(temp.equals(nAddr)){
@@ -265,6 +268,7 @@ public class InternalNode implements Node{
                 succ = rc.addressRequest("GET_SUCC");
 
                 if(succ == null){
+                    //something bad happened
                     return null;
                 }
             }
@@ -272,18 +276,25 @@ public class InternalNode implements Node{
         return nAddr;
     }
 
+    /**
+     * This method is called to compute the closest preceding node of a given id. It is based on the information
+     * provided by the finger table of the current node
+     * @param id The id of an internal node
+     * @return The address of the closest preceding node
+     */
     public InetSocketAddress closestPrecedingNode(BigInteger id){
-
+        //loop on the whole finger table from the furthest node to the closest to local node
         for(int i = Util.m - 1; i >= 0; i--){
             InetSocketAddress ith = fTable.getIthFinger(i);
-
             if(ith == null){
                 continue;
             }
 
+            //if ith finger belongs to the interval (localId, id) it is a candidate
             if(Util.belongsToOpenInterval(Util.hashAdress(ith), localId, id)){
                 boolean value = false;
 
+                //check if the candidate is still active
                 try {
                     (new Socket(ith.getAddress(), ith.getPort())).close();
                     value = true;
@@ -303,53 +314,77 @@ public class InternalNode implements Node{
         return localAddress;
     }
 
+    /**
+     * This method is called to download and insert a file into the pool of files whose
+     * responsibility relies on the invoker
+     * @param s It is the socket where to download the file
+     * @param fileName The name of the file to be inserted
+     * @return True if the whole operation is performed correctly
+     */
     public boolean insertFile(Socket s, String fileName) {
+        //invalid arguments
         if(s == null || fileName == null || fileName.equals("")){
             return false;
         }
 
+        //check if the file is already present in the map (i.e. a modified version is coming),
+        //otherwise create a new entry in the map
         FileManager fm = files.get(fileName);
         if(fm == null){
             fm = new FileManager(path + fileName);
         }
+        //physically download the file
         boolean value = fm.write(s);
 
+        //if everything is ok, add it to the map and send the replica to the predecessor
         if(value){
             files.put(fileName, fm);
 
             InternalFileConnection fc = new InternalFileConnection(this, predAddress);
-
             if(!fc.insertFileRequest(fileName)){
+                //something bad happened, retry
                 fc = new InternalFileConnection(this, predAddress);
                 fc.insertFileRequest(fileName);
             }
-
         }
         return value;
     }
 
+    /**
+     * This method is called to delete a file from the pool and remove it physically
+     * @param fileName The name of the file to be deleted
+     * @return True if the operation is performed correctly
+     */
     public boolean delete(String fileName) {
+        //invalid arguments
         if(fileName == null || fileName.equals("")){
             return false;
         }
 
+        //check if the file is present
         FileManager fm = files.get(fileName);
         if(fm == null){
             return false;
         }
 
+        //at first remove it form the map, then remove it following the path
         files.remove(fileName);
         boolean value = fm.remove();
 
+        //contact the predecessor to delete the replica
         InetSocketAddress pred = predAddress;
         RingConnection rc = new RingConnection(pred);
         InternalFileConnection fc = new InternalFileConnection(this, pred);
 
         if(!fc.deleteFileRequest(fileName)){
+            //something bad happened, retry
             fc = new InternalFileConnection(this, pred);
             fc.deleteFileRequest(fileName);
         }
 
+        //try to delete it also from the predecessor of the predecessor.
+        //this is due to particular situations that may occur when the ring structure is not stable
+        //(i.e. a join or a leave is performed during file exchange)
         InetSocketAddress predPred = null;
         predPred = rc.addressRequest("GET_PRED");
 
@@ -360,6 +395,7 @@ public class InternalNode implements Node{
         fc = new InternalFileConnection(this, predPred);
 
         if(!fc.deleteFileRequest(fileName)){
+            //something bad happened, retry
             fc = new InternalFileConnection(this, predPred);
             fc.deleteFileRequest(fileName);
         }
@@ -367,27 +403,50 @@ public class InternalNode implements Node{
         return value;
     }
 
+    /**
+     * This method is called to upload a file which is present in the pool
+     * @param s It is the socket where to upload the file
+     * @param fileName It represents the desired file name
+     * @return True if the whole operation is performed correctly
+     */
     public boolean get(Socket s, String fileName) {
+        //invalid arguments
         if(s == null || fileName == null || fileName.equals("")){
             return false;
         }
 
+        //check if the specified file is available
         FileManager fm = files.get(fileName);
         if(fm == null){
             return false;
         }
 
+        //upload it
         return fm.read(s);
     }
 
+    /**
+     * This method is called to verify if a given file is available from the pool
+     * @param fileName The desired file name
+     * @return True if the current node is responsible for it (thus it stores the file), false otherwise
+     */
     public boolean hasFile(String fileName){
+        //invalid arguments
         if(fileName == null || fileName.equals("")){
             return false;
         }
         return files.containsKey(fileName);
     }
 
+    /**
+     * This method is called to get a list of files (present in the invoker's pool)
+     * whose name belongs to a specific interval
+     * @param from The beginning of the interval
+     * @param to The end of the interval
+     * @return The list of all the file names that belong to the interval
+     */
     public ArrayList<String> getFilesInterval(BigInteger from, BigInteger to) {
+        //invalid arguments
         if(from == null || to == null) {
             return null;
         }
@@ -402,30 +461,48 @@ public class InternalNode implements Node{
         return result;
     }
 
+    /**
+     * This method is called to delete all the files whose names belong to the specified interval.
+     * The files are both removed from the pool and physically
+     * @param from The beginning of the interval
+     * @param to The end of the interval
+     * @return True if the operation is performed correctly
+     */
     public boolean deleteFilesInterval(BigInteger from, BigInteger to) {
+        //invalid arguments
         if(from == null || to == null) {
             return false;
         }
 
         for(String s : files.keySet()){
             if(Util.belongsToInterval(Util.hashFile(s), from, to)){
-                singleDelete(s); //what if something goes wrong here?
+                singleDelete(s);
             }
         }
         return true;
     }
 
+    /**
+     * This method is called to download a file. The difference between this and insertFile() method is that
+     * here no file replica is passed to the predecessor
+     * @param s It is the socket where to download the file
+     * @param fileName The name of the file to be downloaded
+     * @return True if the operation is performed correctly
+     */
     public boolean singleInsert(Socket s, String fileName) {
+        //invalid arguments
         if(s == null || fileName == null || fileName.equals("")){
             return false;
         }
 
+        //check if the file is already present in the pool, otherwise create the entry and finally download the file
         FileManager fm = files.get(fileName);
         if(fm == null){
             fm = new FileManager(path + fileName);
         }
         boolean value = fm.write(s);
 
+        //if everything ok during the download, insert the file in the pool
         if(value){
             files.put(fileName, fm);
         }
@@ -433,70 +510,107 @@ public class InternalNode implements Node{
         return value;
     }
 
+    /**
+     * This method is called to delete a file. The difference between this and deleteFile() method is that
+     * here the predecessor is not notified to remove its file replica
+     * @param fileName The name of the file to be deleted
+     * @return True if the operation is performed correctly
+     */
     public boolean singleDelete(String fileName) {
+        //invalid arguments
         if(fileName == null || fileName.equals("")){
             return false;
         }
 
+        //check if the file is actually present in the pool and if so, remove it
         FileManager fm = files.get(fileName);
         if(fm == null){
             return false;
         }
+
         boolean value = fm.remove();
         if(value){
+            //physically remove the file
             files.remove(fileName);
         }
         return value;
     }
 
     /**
-     * @return id of the node
+     * This method is called to get the invoker's id
+     * @return The id of the internal node
      */
     public BigInteger getLocalId() {
         return localId;
     }
 
     /**
-     * @return address (ip and port) of the node
+     * This method is called to get the invoker's address
+     * @return The IP address and port number of the internal node
      */
     public InetSocketAddress getLocalAddress() {
-
         return localAddress;
     }
 
+    /**
+     * This method is called to check if the invoker can sustain a join operation
+     * @return True if the node can sustain a join operation, false otherwise
+     */
     public boolean isJoinAvailable() {
-
         return joinAvailable.get();
     }
 
-    public  boolean getAndSetJoinAvailable(boolean value){
-
+    /**
+     * This method is called to get and set the value of the joinAvailable variable
+     * @param value It is the new joinAvailable value
+     * @return The joinAvailable value before the setting
+     */
+    public boolean getAndSetJoinAvailable(boolean value){
         return joinAvailable.getAndSet(value);
     }
 
+    /**
+     * This method is called to set a new predecessor to the current node. When the predecessor is changed,
+     * the FileUpdater may start to stabilize the file location in the ring
+     * @param newPred The address of the new predecessor
+     * @return True if the operation is performed correctly
+     */
     public boolean setPredecessor(InetSocketAddress newPred){
+        //update oldPred
         synchronized (oldPred){
             if(predAddress != null){
                 oldPred = predAddress;
             }
             predAddress = newPred;
         }
+        //check if the invoker is the only node in the ring
         if(localAddress.equals(newPred)){
             joinAvailable.set(true);
             return true;
         }
+        //if oldPred belongs to the interval (newPred localId) then start the FileUpdater
+        //(i.e. the setPredecessor() method is called after a leave operation or a crash of the predecessor)
         if(newPred != null && Util.belongsToOpenInterval(Util.hashAdress(oldPred), Util.hashAdress(newPred), localId)){
             (new FileUpdater(newPred, this, Util.hashAdress(newPred), Util.hashAdress(oldPred), false)).start();
         }
         return true;
     }
 
+    /**
+     * This method is called to set a new successor to the current node. When the successor is changed,
+     * the FileUpdater may start to stabilize the file location in the ring
+     * @param newSucc The address of the new successor
+     * @return True if the operation is performed correctly
+     */
     public boolean setSuccessor(InetSocketAddress newSucc){
         fTable.updateIthFinger(0, newSucc);
+        //check if the invoker is the only node in the ring
         if(localAddress.equals(newSucc)){
             joinAvailable.set(true);
             return true;
         }
+        //if oldSucc belongs to the interval (localId newSucc) then start the FileUpdater
+        //(i.e. the setSuccessor() method is called after a leave operation or a crash of the predecessor)
         if(newSucc != null && Util.belongsToOpenInterval(Util.hashAdress(fTable.getOldSucc()), localId, Util.hashAdress(newSucc))){
             (new FileUpdater(newSucc, this, Util.hashAdress(fTable.getOldSucc()), Util.hashAdress(newSucc), false)).start();
         }
@@ -504,24 +618,32 @@ public class InternalNode implements Node{
     }
 
     /**
-     *
-     * @return
+     * This method is called to get the address of the invoker's predecessor
+     * @return The predecessor's address
      */
     public synchronized InetSocketAddress getPredAddress() {
         return predAddress;
     }
 
+    /**
+     * This method is called to get the address of the invoker's successor
+     * @return The successor's address
+     */
     public InetSocketAddress getSuccAddress(){
         return fTable.getIthFinger(0);
     }
 
+    /**
+     * This method is called to get the invoker's finger table
+     * @return The finger table of the internal node
+     */
     public FingerTable getfTable() {
         return fTable;
     }
 
     /**
      * This method is called to print the files whose responsibility relies on the current node
-     * @return The string representing the finger table
+     * @return The string representing the files in the pool
      */
     public String getFiles(){
         StringBuilder sb = new StringBuilder();
