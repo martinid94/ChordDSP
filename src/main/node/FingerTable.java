@@ -115,6 +115,9 @@ public class FingerTable {
                 InetSocketAddress myPred = node.getPredAddress();
                 InetSocketAddress validPred = myPred;
                 if(myPred == null){
+                    table[0] = node.getLocalAddress();
+                    node.setPredecessor(node.getLocalAddress());
+                    node.getAndSetJoinAvailable(true);
                     return;
                 }
                 while (myPred != null){
@@ -126,13 +129,6 @@ public class FingerTable {
             }
         }
 
-        /*problem if all elements in the fingerTable are null
-        (possible solution: try to find the node woth predessor equals to null moving backward in the ring)*/
-
-//        successor = getSuccessor();
-//        if ((successor == null || successor.equals(localAddress)) && predecessor!=null && !predecessor.equals(localAddress)) {
-//            updateIthFinger(1, predecessor);
-//        }
     }
 
     public synchronized InetSocketAddress getOldSucc(){

@@ -61,7 +61,7 @@ public class InternalNode implements Node{
      */
     public boolean join(InetSocketAddress bootstrapNode){
 
-        if(bootstrapNode == null){
+        if(bootstrapNode == null || localAddress.equals(bootstrapNode)){
             return false;
         }
 
@@ -146,8 +146,6 @@ public class InternalNode implements Node{
         if(!rc.setSuccessorRequest(getSuccAddress())){
             rc.setSuccessorRequest(getSuccAddress());
         }
-
-        //TODO bloccare i thread listener, fixfinger, askpredecessor, stabilizer
 
         return true;
     }
@@ -436,6 +434,10 @@ public class InternalNode implements Node{
             }
             predAddress = newPred;
         }
+        if(localAddress.equals(newPred)){
+            joinAvailable.set(true);
+            return true;
+        }
         if(newPred != null && Util.belongsToOpenInterval(Util.hashAdress(oldPred), Util.hashAdress(newPred), localId)){
             (new FileUpdater(newPred, this, Util.hashAdress(newPred), Util.hashAdress(oldPred), false)).start();
         }
@@ -444,6 +446,10 @@ public class InternalNode implements Node{
 
     public boolean setSuccessor(InetSocketAddress newSucc){
         fTable.updateIthFinger(0, newSucc);
+        if(localAddress.equals(newSucc)){
+            joinAvailable.set(true);
+            return true;
+        }
         if(newSucc != null && Util.belongsToOpenInterval(Util.hashAdress(fTable.getOldSucc()), localId, Util.hashAdress(newSucc))){
             (new FileUpdater(newSucc, this, Util.hashAdress(fTable.getOldSucc()), Util.hashAdress(newSucc), false)).start();
         }
