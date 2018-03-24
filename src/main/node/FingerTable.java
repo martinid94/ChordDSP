@@ -6,27 +6,39 @@ import main.connection.RingConnection;
 import java.net.InetSocketAddress;
 
 /**
- * Created by Marco on 24/02/2018.
+ * This class represents the finger table of an internal node. It contains the node's information about
+ * the ring structure. It provides several methods to recover the information in case of a remote node failure
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class FingerTable {
 
-    InetSocketAddress[] table;
-    InetSocketAddress oldSucc;
+    private InetSocketAddress[] table;
+    private InetSocketAddress oldSucc;
 
+    /**
+     * Unique constructor of the class
+     */
     public FingerTable(){
         table = new InetSocketAddress[Util.m];
         oldSucc = null;
     }
 
     /**
-     *
-     * @param i: index of the table to update
-     * @param node: node address to insert
+     * This method is called to update the ith finger of the table
+     * @param i Index of the table to update
+     * @param node Node address to insert
      */
     public synchronized void updateIthFinger(int i, InetSocketAddress node){
+
+        //invalid argument
         if(i < 0 || i >= Util.m){
             throw new IllegalArgumentException();
         }
+
         if(i == 0 && table[i] != null && !table[i].equals(node)){
             oldSucc = table[i];
         }
@@ -34,18 +46,27 @@ public class FingerTable {
     }
 
     /**
-     *
-     * @param i: index of the table
-     * @return address node in the ith line of table
+     * This method is called to get the ith finger in the table
+     * @param i Index of the table
+     * @return The address node in the ith line of table
      */
     public synchronized InetSocketAddress getIthFinger(int i){
+
+        //invalid argument
         if(i < 0 || i >= Util.m){
             throw new IllegalArgumentException();
         }
         return table[i];
     }
 
+    /**
+     * This method is called by the Stabilizer to delete a node form the table. It is called when the successor
+     * node fails and sets all the unreachable entries to null.
+     * @param addr Address of the node to be deleted
+     */
     public synchronized void deleteNode(InetSocketAddress addr) {
+
+        //invalid argument
         if(addr == null){
             return;
         }
@@ -60,6 +81,11 @@ public class FingerTable {
         }
     }
 
+    /**
+     * This method is called by the Stabilizer to fill the finger table after a deleteNode() invocation.
+     * At first it tries to fill the successor 
+     * @param node
+     */
     public synchronized void fillSuccessor(InternalNode node){
         InetSocketAddress succ = table[0];
 

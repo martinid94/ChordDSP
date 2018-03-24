@@ -1,22 +1,29 @@
 package main.node;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Created by Davide on 25/02/2018.
+ * This class is an extension of the java.io.File class. It provides several methods that allows to physically
+ * read or write a file in/from the file system with concurrency control.
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class FileManager extends File {
     private ReadWriteLock rwl;
     private Lock readLock;
     private Lock writeLock;
 
+    /**
+     * Unique constructor of the class
+     * @param pathName It is the path with the name of the file to be read or written
+     */
     public FileManager(String pathName) {
         super(pathName);
         rwl = new ReentrantReadWriteLock();
@@ -24,6 +31,11 @@ public class FileManager extends File {
         writeLock = rwl.writeLock();
     }
 
+    /**
+     * This method reads the file and uploads it to the specified socket
+     * @param s It is the socket where to upload the file
+     * @return True if the operation is performed correctly
+     */
     public boolean read(Socket s) {
         readLock.lock();
         boolean value = readManager(s);
@@ -31,7 +43,11 @@ public class FileManager extends File {
         return value;
     }
 
-
+    /**
+     * This method writes the file from a specified socket and writes it in the file system
+     * @param s It is the socket where to download the file
+     * @return True if the operation is performed correctly
+     */
     public boolean write(Socket s) {
         writeLock.lock();
         boolean value = writeManager(s);
@@ -39,6 +55,10 @@ public class FileManager extends File {
         return value;
     }
 
+    /**
+     * This method removes the file from the file system
+     * @return True if the operation is performed correctly
+     */
     public boolean remove() {
         writeLock.lock();
         boolean value = this.delete();
@@ -65,7 +85,6 @@ public class FileManager extends File {
             while ((readBytes = bis.read(buffer)) != -1){
                 bos.write(buffer, 0, readBytes);
             }
-
 
             value = true;
         } catch (IOException e) {
@@ -105,7 +124,6 @@ public class FileManager extends File {
                 bos.write(buffer, 0, readBytes);
             }
 
-
             value = true;
         } catch (IOException e) {
             value = false;
@@ -124,6 +142,5 @@ public class FileManager extends File {
         }
 
         return value;
-
     }
 }
