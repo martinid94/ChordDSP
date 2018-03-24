@@ -278,6 +278,6 @@ public class Executor implements Runnable{
     private void hasFile() throws IOException, ClassNotFoundException {
         String fileName = (String) ois.readObject();
 
-        oos.writeBoolean(internalNode.hasFile(fileName));
+        oos.writeObject(internalNode.hasFile(fileName));
     }
 }
