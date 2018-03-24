@@ -110,7 +110,9 @@ public class FileConnection extends Connection {
         finally {
             try {
                 closeConnection();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return retVal;
@@ -151,7 +153,9 @@ public class FileConnection extends Connection {
         finally {
             try {
                 closeConnection();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return retVal;

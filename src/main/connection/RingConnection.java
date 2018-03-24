@@ -35,8 +35,7 @@ public class RingConnection extends Connection {
             return null;
         }
 
-        InetSocketAddress mySucc = (InetSocketAddress) sendReceive("FIND_SUCC", localId);
-        return mySucc;
+        return (InetSocketAddress) sendReceive("FIND_SUCC", localId);
     }
 
     /**
@@ -153,7 +152,9 @@ public class RingConnection extends Connection {
         finally {
             try {
                 closeConnection();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return obj;
