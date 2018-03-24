@@ -14,7 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by Marco on 24/02/2018.
+ * This class represents a node that belongs to the Chord ring. It provides all the methods that deal with the
+ * the ring structure and file management.
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class InternalNode implements Node{
 
@@ -30,11 +36,15 @@ public class InternalNode implements Node{
     private Stabilizer stabilizer;
     private ConcurrentHashMap<String, FileManager> files;
     private String path;
-    //file manager da inserire
-    //eventuali altri thread
 
+    /**
+     * Unique constructor of the class
+     * @param local The IP address and port number of the node
+     * @param path The path where to insert and retrieve files
+     */
     public InternalNode(InetSocketAddress local, String path){
 
+        //invalid arguments
         if(local == null || path == null || path.equals("")){
             throw new IllegalArgumentException();
         }
@@ -42,61 +52,70 @@ public class InternalNode implements Node{
         localAddress = local;
         fTable = new FingerTable();
         localId = Util.hashAdress(local);
-        joinAvailable = new AtomicBoolean();
+        joinAvailable = new AtomicBoolean(); //used as a flag to show if the node can sustain join operation
         predAddress = null;
         oldPred = null;
         listener = new Listener(this);
         checkPred = new CheckPredecessor(this);
         fixFinger = new FixFinger(this);
         stabilizer = new Stabilizer(this);
-        files = new ConcurrentHashMap<>();
+        files = new ConcurrentHashMap<>(); //files whose responsibility relies on the current node
         this.path = path;
     }
 
 
     /**
-     *
-     * @param bootstrapNode: address of the bootstrap node
-     * @return true if join has been performed otherwise false
+     * This method is called to perform the join of the node to the Chord ring
+     * @param bootstrapNode Address of the bootstrap node
+     * @return True if the join has been performed correctly
      */
     public boolean join(InetSocketAddress bootstrapNode){
 
+        //invalid arguments
         if(bootstrapNode == null || localAddress.equals(bootstrapNode)){
             return false;
         }
 
+        //unable to sustain other joins
         joinAvailable.set(false);
 
+        //find the successor
         RingConnection rc = new RingConnection(bootstrapNode);
         InetSocketAddress mySucc = rc.findSuccessorRequest(localId);
-
 
         //error in findSuccessorRequest
         if(mySucc == null){
             return false;
         }
 
+        //contact the successor and ask for join
         rc = new RingConnection(mySucc);
         InetSocketAddress myPred = rc.joinRequest(localAddress);
-
 
         //myPred == null if there is an error (join is not available)
         if(myPred == null){
             return false;
         }
 
+        //set successor and predecessor
         predAddress = myPred;
         oldPred = myPred;
         fTable.updateIthFinger(0, mySucc);
 
+        //allow to process arriving requests
         listener.start();
 
+        //try to set the successor of my predecessor
         rc = new RingConnection(myPred);
         if(rc.setSuccessorRequest(localAddress) == null){
+            //something went wrong, retry
             rc.setSuccessorRequest(localAddress);
         }
 
+        //download files and communicate the replicas removal
         new FileUpdater(mySucc, this, Util.hashAdress(myPred), Util.hashAdress(mySucc), true).start();
+
+        //start threads that monitor the ring
         checkPred.start();
         fixFinger.start();
         stabilizer.start();
@@ -104,12 +123,20 @@ public class InternalNode implements Node{
         return true;
     }
 
+    /**
+     * This method is called by the first node that joins (and thus creates) the Chord ring
+     * @return True if the operation is performed correctly
+     */
     public boolean bootstrapJoin(){
+        //set predecessor and successor as local address
         predAddress = localAddress;
         oldPred = localAddress;
         fTable.updateIthFinger(0, localAddress);
 
+        //now the node can sustain join operations
         joinAvailable.set(true);
+
+        //start threads that process arriving requests and monitor the ring
         listener.start();
         checkPred.start();
         fixFinger.start();
@@ -118,26 +145,37 @@ public class InternalNode implements Node{
         return true;
     }
 
+    /**
+     * This method is called by an internal node that wants to leave the Chord ring intentionally.
+     * @return True if the operation is performed correctly
+     */
     public boolean leave(){
-
+        //connect to successor and make it refuse join operations
         RingConnection rc = new RingConnection(getSuccAddress());
         Boolean succJoinAvailable = rc.getAndSetAvailabilityRequest(false);
         if(succJoinAvailable == null){
+            //bad connection, retry
             succJoinAvailable = rc.getAndSetAvailabilityRequest(false);
         }
 
+        //again bad connection or successor is performing a join no leave is allowed due to file exchange
         if(succJoinAvailable == null || !succJoinAvailable){
             return false;
         }
 
+        //if successor accepts leave operation but the current node is still sustaining a join, leave not allowed
         if(!joinAvailable.getAndSet(false) && succJoinAvailable){
+            //reset successor joinAvailable as true
             if(rc.getAndSetAvailabilityRequest(true) == null){
+                //bad connection, retry
                 rc.getAndSetAvailabilityRequest(true);
             }
             joinAvailable.getAndSet(true);
             return false;
         }
 
+        //otherwise send to successor the predecessor (i.e. its new predecessor)
+        //and to predecessor the successor (i.e. its new successor)
         if(!rc.setPredecessorRequest(getPredAddress())){
             rc.setPredecessorRequest(getPredAddress());
         }
@@ -150,29 +188,37 @@ public class InternalNode implements Node{
         return true;
     }
 
+    /**
+     * This method is called to find the successor node of a given id
+     * @param id The id of an internal node
+     * @return The address of the successor node
+     */
     public InetSocketAddress findSuccessor(BigInteger id){
-
+        //find predecessor of node id
         InetSocketAddress predecessor = findPredecessor(id);
-
         if(predecessor == null){
             return null;
         }
 
-        //if this node is the predecessor of id then return the successor of this node
+        //if the current node is the predecessor of id then return the successor of this node
         if(predecessor.equals(localAddress)){
             return getSuccAddress();
         }
 
+        //otherwise get the predecessor's successor
         RingConnection rc = new RingConnection(predecessor);
-
         InetSocketAddress ret = null;
         ret = rc.addressRequest("GET_SUCC");
 
         return ret;
     }
 
+    /**
+     * This method is called to find the predecessor node of a given id
+     * @param id The id of an internal node
+     * @return The address of the predecessor node
+     */
     public InetSocketAddress findPredecessor(BigInteger id){
-
         BigInteger n = localId;
         InetSocketAddress nAddr = localAddress;
         InetSocketAddress succ = getSuccAddress();
@@ -185,6 +231,7 @@ public class InternalNode implements Node{
             return localAddress;
         }
 
+        //until id does not belong to (n, succ] cycle changing
         while(!Util.belongsToInterval(id, n, Util.hashAdress(succ))){
 
             if(n.equals(localId)){
@@ -470,5 +517,17 @@ public class InternalNode implements Node{
 
     public FingerTable getfTable() {
         return fTable;
+    }
+
+    /**
+     * This method is called to print the files whose responsibility relies on the current node
+     * @return The string representing the finger table
+     */
+    public String getFiles(){
+        StringBuilder sb = new StringBuilder();
+        for(String file : files.keySet()){
+            sb.append(file + "\n");
+        }
+        return sb.toString();
     }
 }

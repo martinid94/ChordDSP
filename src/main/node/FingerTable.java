@@ -30,7 +30,7 @@ public class FingerTable {
     /**
      * This method is called to update the ith finger of the table
      * @param i Index of the table to update
-     * @param node Node address to insert
+     * @param node Node address to be inserted
      */
     public synchronized void updateIthFinger(int i, InetSocketAddress node){
 
@@ -61,7 +61,7 @@ public class FingerTable {
 
     /**
      * This method is called by the Stabilizer to delete a node form the table. It is called when the successor
-     * node fails and sets all the unreachable entries to null.
+     * node fails and it sets all the unreachable entries to null.
      * @param addr Address of the node to be deleted
      */
     public synchronized void deleteNode(InetSocketAddress addr) {
@@ -82,14 +82,15 @@ public class FingerTable {
     }
 
     /**
-     * This method is called by the Stabilizer to fill the finger table after a deleteNode() invocation.
-     * At first it tries to fill the successor 
-     * @param node
+     * This method is called by the Stabilizer to fill the finger table after a deleteNode() invocation
+     * @param node It is a reference of the invoker node
      */
     public synchronized void fillSuccessor(InternalNode node){
         InetSocketAddress succ = table[0];
 
+        //proceed only after a deleteNode(successor)
         if(succ == null){
+            //select as candidate the first not null entry of the table and fill the array
             for (int k = 1; k < Util.m; k++) {
                 InetSocketAddress ithfinger = table[k];
                 if (ithfinger!=null && !ithfinger.equals(node.getLocalAddress())) {
@@ -100,6 +101,8 @@ public class FingerTable {
                 }
             }
 
+            //if a valid candidate has been found, check if some nodes have been missed
+            //try to move backwards in the ring from the candidate node
             if(table[0] != null){
                 RingConnection rc = new RingConnection(table[0]);
                 InetSocketAddress pred = rc.addressRequest("GET_PRED");
@@ -111,9 +114,12 @@ public class FingerTable {
                 }
                 table[0] = validPred;
             }
+            //otherwise (i.e. all the table entries were equal to the previous successor)
+            //try to move backwards in the ring from the invoker's predecessor
             else{
                 InetSocketAddress myPred = node.getPredAddress();
                 InetSocketAddress validPred = myPred;
+                //if the invoker's predecessor is also null, then it is the only one in the ring
                 if(myPred == null){
                     table[0] = node.getLocalAddress();
                     node.setPredecessor(node.getLocalAddress());
@@ -131,10 +137,18 @@ public class FingerTable {
 
     }
 
+    /**
+     * This method is called to get the invoker node's old successor with concurrency control
+     * @return The address of the old successor
+     */
     public synchronized InetSocketAddress getOldSucc(){
         return oldSucc;
     }
 
+    /**
+     * This method is called to print the finger table
+     * @return The string representing the finger table
+     */
     public String toString(){
         StringBuilder sb = new StringBuilder();
         for(InetSocketAddress ad : table){
