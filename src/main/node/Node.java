@@ -12,7 +12,7 @@ import java.net.Socket;
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering..
  */
 public interface Node {
-    
+
     boolean singleInsert(Socket s, String fileName);
     boolean get(Socket s, String fileName);
 }
