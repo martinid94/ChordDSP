@@ -8,33 +8,39 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
 /**
- * Created by Davide on 25/02/2018.
+ * This class provides all the methods that an node belonging to the Chord ring may call in order to
+ * download, upload and delete one or more files stored in the Chord ring.
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class InternalFileConnection extends FileConnection{
 
     /**
      * Unique constructor for the class
-     * @param n needed to perform file operations
-     * @param nodeAd contact node
+     * @param n It is the reference of the node that requests file operations.
+     * @param nodeAd The address to contact the node
      */
     public InternalFileConnection(InternalNode n, InetSocketAddress nodeAd){
         super(n, nodeAd);
     }
 
     /**
-     * Method used to get a file form an internal node. It wraps the superclass getFileRequest() method
-     * @param fileName is the desired file name
-     * @return true if the operation is performed correctly
+     * This method is called to get a file form an internal node. It wraps the superclass getFileRequest() method
+     * @param fileName It is the desired file name
+     * @return True if the operation is performed correctly
      */
     public boolean getFileRequest(String fileName){
         return super.getFileRequest(fileName);
     }
 
     /**
-     * Method used to request a set of files whose id belongs in a given interval
-     * @param from beginning of the interval
-     * @param to end of the interval
-     * @return true if the operation is performed correctly
+     * This method is called to request a set of files whose id belongs to a given interval
+     * @param from It represents the beginning of the interval
+     * @param to It represents the end of the interval
+     * @return True if the operation is performed correctly
      */
     public ArrayList<String> fileIntervalRequest(BigInteger from, BigInteger to){
 
@@ -58,36 +64,38 @@ public class InternalFileConnection extends FileConnection{
         finally {
             try {
                 closeConnection();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return retVal;
     }
 
     /**
-     * Method used to insert a file into an internal node. It wraps the superclass insertFileRequest() method
-     * @param fileName is the file name
-     * @return true if the operation is performed correctly
+     * This method is called to insert a file into an internal node. It wraps the superclass insertFileRequest() method
+     * @param fileName It is the name of the file to be inserted
+     * @return True if the operation is performed correctly
      */
     public boolean insertFileRequest(String fileName){
         return super.insertFileRequest(fileName);
     }
 
     /**
-     * Method used to remove a file form an internal node. It wraps the superclass deleteFileRequest() method
-     * @param fileName is the file name
-     * @return true if the operation is performed correctly
+     * This method is called to remove a file form an internal node. It wraps the superclass deleteFileRequest() method
+     * @param fileName It is the name of the file to be deleted
+     * @return True if the operation is performed correctly
      */
     public boolean deleteFileRequest(String fileName){
         return super.deleteFileRequest(fileName);
     }
 
     /**
-     * Method used to request multiple file deletion from the contact node.
-     * Files to be removed has id which belongs to a given interval
-     * @param from beginning of the interval
-     * @param to end of the interval
-     * @return true if the operation is performed correctly
+     * This method is called to request multiple file deletion from the contact node.
+     * Files to be removed have ids which belong to a given interval
+     * @param from It represents the beginning of the interval
+     * @param to It represents the end of the interval
+     * @return True if the operation is performed correctly
      */
     public boolean deleteFilesRequest(BigInteger from, BigInteger to){
 
@@ -113,16 +121,18 @@ public class InternalFileConnection extends FileConnection{
         finally {
             try {
                 closeConnection();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return retVal;
     }
 
     /**
-     * Method used to request a node if it has a file
-     * @param fileName searched file
-     * @return true if the contact has the specified file, false otherwise
+     * This method is called to request an internal node if it has a file
+     * @param fileName It is the desired file name
+     * @return True if the contact has the specified file, false otherwise
      */
     public boolean hasFileRequest(String fileName){
 
@@ -144,7 +154,9 @@ public class InternalFileConnection extends FileConnection{
         finally {
             try {
                 closeConnection();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return result;

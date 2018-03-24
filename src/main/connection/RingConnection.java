@@ -5,7 +5,13 @@ import java.math.BigInteger;
 import java.net.InetSocketAddress;
 
 /**
- * Created by Davide on 24/02/2018.
+ * This class provides all the methods that internal nodes (those who belong to the Chord ring) call in order to
+ * request information on the Chord ring structure.
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class RingConnection extends Connection {
 
@@ -18,9 +24,9 @@ public class RingConnection extends Connection {
     }
 
     /**
-     * Method used in the join procedure in order to ask a bootstrap node for the invoker's successor in the ring
-     * @param localId invoker's id
-     * @return invoker's successor in the ring
+     * This method is called in the join procedure in order to ask a bootstrap node for the invoker's successor in the ring
+     * @param localId It is invoker's id
+     * @return The invoker's successor in the ring
      */
     public InetSocketAddress findSuccessorRequest(BigInteger localId){
 
@@ -34,9 +40,9 @@ public class RingConnection extends Connection {
     }
 
     /**
-     * Method used to request a node for its successor or predecessor
-     * @param req: specifies whether successor or predecessor is requested
-     * @return the successor or predecessor of a node
+     * This method is called to request a node for its successor or predecessor
+     * @param req It specifies whether successor or predecessor is requested
+     * @return The successor or predecessor of a node
      */
     public InetSocketAddress addressRequest(String req) {
 
@@ -49,9 +55,9 @@ public class RingConnection extends Connection {
     }
 
     /**
-     * Method used to request for the closest node in the ring preceding a specific id.
-     * @param id: specifies the start of the research
-     * @return closest preceding node computed by the contact node
+     * This method is called to request for the closest node in the ring preceding a specific id.
+     * @param id It specifies the start of the research
+     * @return The closest preceding node computed by the contact node
      */
     public InetSocketAddress closestRequest(BigInteger id){
 
@@ -64,10 +70,10 @@ public class RingConnection extends Connection {
     }
 
     /**
-     * Method used used when some (bootstrap) nodes are active in the ring.
+     * This method is called when some (bootstrap) nodes are active in the ring.
      * It aims to contact the invoker's successor and begin a join procedure if it can perform it.
-     * @param myself invoker's address
-     * @return my successor's old predecessor (which can be now set as my predecessor)
+     * @param myself It is invoker's address
+     * @return The old predecessor of the invoker's successor (which can be now set as the invoker's predecessor)
      */
     public InetSocketAddress joinRequest(InetSocketAddress myself){
 
@@ -80,8 +86,8 @@ public class RingConnection extends Connection {
     }
 
     /**
-     * Method used to request and set a node's joinAvailable variable status
-     * @return a node's joinAvailable value, null if the connection failed
+     * This method is called to request and set a node's joinAvailable variable status
+     * @return A node's joinAvailable value, null if the connection failed
      */
     public Boolean getAndSetAvailabilityRequest(boolean status){
 
@@ -89,9 +95,9 @@ public class RingConnection extends Connection {
     }
 
     /**
-     * Method used to set a node's predecessor.
-     * @param newPred new predecessor's address
-     * @return true if the communication and the variable setting has been performed correctly
+     * This method is called to set a node's predecessor.
+     * @param newPred New predecessor's address
+     * @return True if the communication and the variable setting has been performed correctly
      */
     public Boolean setPredecessorRequest(InetSocketAddress newPred){
 
@@ -109,9 +115,9 @@ public class RingConnection extends Connection {
     }
 
     /**
-     * Method used to set a node's successor.
-     * @param newSucc new successor's address
-     * @return true if the communication and the variable setting has been performed correctly
+     * This method is called to set a node's successor.
+     * @param newSucc New successor's address
+     * @return True if the communication and the variable setting has been performed correctly
      */
     public Boolean setSuccessorRequest(InetSocketAddress newSucc){
 

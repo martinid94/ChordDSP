@@ -7,7 +7,14 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 /**
- * Created by Marco on 17/03/2018.
+ * This class provides all the methods that both internal nodes (those who belong to the Chord ring) and
+ * external ones may call in order to request several file operations. These include the download, the upload
+ * and the deletion of files stored in the Chord ring.
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class FileConnection extends Connection {
 
@@ -15,8 +22,8 @@ public class FileConnection extends Connection {
 
     /**
      * Unique constructor of the class
-     * @param n needed to perform file operations
-     * @param nodeAd address to contact the node
+     * @param n It is the reference of the node that requests file operations.
+     * @param nodeAd The address to contact the node
      */
     public FileConnection(Node n, InetSocketAddress nodeAd){
         super(nodeAd);
@@ -24,10 +31,10 @@ public class FileConnection extends Connection {
     }
 
     /**
-     * Method used to request a get file operation to a specific node.
+     * This method is called to request a get file operation from a specific node.
      * The contact node sends back the file which is downloaded.
-     * @param fileName is the desired file name
-     * @return true if the whole operation has been performed correctly
+     * @param fileName It is the desired file name
+     * @return True if the whole operation has been performed correctly
      */
     public boolean getFileRequest(String fileName) {
 
@@ -58,18 +65,20 @@ public class FileConnection extends Connection {
         finally {
             try {
                 closeConnection();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return retVal;
     }
 
     /**
-     * Method used to request an insert file operation into a specific node.
+     * This method is called to request an insert file operation into a specific node.
      * It distinguishes whether to perform a single insert or to make the contact know that it
      * has to send the replica to the correct node
-     * @param fileName is the file name to be inserted
-     * @return true if the whole operation is performed correctly
+     * @param fileName It is the file name to be inserted
+     * @return True if the whole operation is performed correctly
      */
     public boolean insertFileRequest(String fileName){
 
@@ -108,11 +117,11 @@ public class FileConnection extends Connection {
     }
 
     /**
-     * Method used to request the deletion of a file which is stored in a specific node
+     * This method is called to request the deletion of a file which is stored in a specific internal node
      * It distinguishes whether to perform a single delete or to make the contact know that it
      * has to delete also the replica from the correct node
-     * @param fileName is the file name to be deleted
-     * @return true if the contact node performs it
+     * @param fileName It is the name of the file to be deleted
+     * @return True if the contact node performs it
      */
     public boolean deleteFileRequest(String fileName){
 

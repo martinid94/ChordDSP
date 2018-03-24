@@ -5,16 +5,22 @@ import main.node.Node;
 import java.net.InetSocketAddress;
 
 /**
- * Created by Marco on 15/03/2018.
+ * This class provides all the methods that an external node (a host external form the Chord ring) may call in order to
+ * download, upload or delete a file stored in the Chord ring.
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class ExternalFileConnection extends FileConnection {
 
     private RingConnection rc;
 
     /**
-     * Unique construstor of the class
-     * @param n needed to perform file operations
-     * @param node contact node
+     * Unique constructor of the class
+     * @param n It is the reference of the node that requests file operations.
+     * @param node The address to contact the node
      */
     public ExternalFileConnection(Node n, InetSocketAddress node){
         super(n, node);
@@ -22,9 +28,9 @@ public class ExternalFileConnection extends FileConnection {
     }
 
     /**
-     * Method used to get a file form an internal node. It wraps the superclass getFileRequest() method
-     * @param fileName is the desired file name
-     * @return true if the operation is performed correctly
+     * This method is called to get a file form an internal node. It wraps the superclass getFileRequest() method
+     * @param fileName It is the desired file name
+     * @return True if the operation is performed correctly
      */
     public boolean getFileRequest(String fileName) {
         boolean value = super.getFileRequest(fileName);
@@ -39,18 +45,18 @@ public class ExternalFileConnection extends FileConnection {
     }
 
     /**
-     * Method used to insert a file form a node external to the ring. It wraps the superclass insertFileRequest() method
-     * @param fileName is the file name to be inserted
-     * @return true if the operation is performed correctly
+     * This method is called to insert a file form a node external to the ring. It wraps the superclass insertFileRequest() method
+     * @param fileName It is the name of the file be inserted
+     * @return True if the operation is performed correctly
      */
     public boolean insertFileRequest(String fileName){
         return super.insertFileRequest(fileName);
     }
 
     /**
-     * Method used to delete a file stored in an internal node. It wraps the superclass deleteFileRequest() method
-     * @param fileName is the file name to be deleted
-     * @return true if the operation is performed correctly
+     * This method is called to delete a file stored in an internal node. It wraps the superclass deleteFileRequest() method
+     * @param fileName It is the name of the file to be deleted
+     * @return True if the operation is performed correctly
      */
     public boolean deleteFileRequest(String fileName){
         return super.deleteFileRequest(fileName);

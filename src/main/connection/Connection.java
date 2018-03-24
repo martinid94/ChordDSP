@@ -7,9 +7,14 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- * Created by Davide on 24/02/2018.
+ * This class provides the basic methods to start and close a connection with a specified host
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
-public abstract class Connection {
+public class Connection {
 
     protected InetSocketAddress nodeAddress;
     protected Socket s;
@@ -18,7 +23,7 @@ public abstract class Connection {
 
     /**
      * Unique constructor of the class
-     * @param nodeAd specifies the address of the node we want to contact
+     * @param nodeAd It specifies the address of the node that the invoker wants to contact
      */
     public Connection(InetSocketAddress nodeAd){
         nodeAddress = nodeAd;
@@ -28,10 +33,12 @@ public abstract class Connection {
     }
 
     /**
-     * Method to start a connection with a node
-     * @throws IOException
+     * This method starts a connection with a contact node
+     * @throws IOException In case the contact node is null or the connection fails
      */
-    protected void startConnection() throws  IOException, IllegalArgumentException {
+    protected void startConnection() throws  IOException {
+
+        //invalid contact
         if(nodeAddress == null){
             throw new IOException();
         }
@@ -41,8 +48,8 @@ public abstract class Connection {
     }
 
     /**
-     * Method to close a connection with a node
-     * @throws IOException
+     * This method closes a connection which was opened with a contact node
+     * @throws IOException In case the connection closing fails
      */
     protected void closeConnection() throws IOException {
         if(ois != null)
@@ -53,6 +60,5 @@ public abstract class Connection {
 
         if(s != null)
             s.close();
-
     }
 }
