@@ -61,4 +61,13 @@ public class ExternalFileConnection extends FileConnection {
     public boolean deleteFileRequest(String fileName){
         return super.deleteFileRequest(fileName);
     }
+
+    /**
+     * This method is called to request an node if it has a file
+     * @param fileName It is the desired file name
+     * @return True if the contact has the specified file, false otherwise
+     */
+    public boolean hasFileRequest(String fileName){
+        return super.hasFileRequest(fileName);
+    }
 }
