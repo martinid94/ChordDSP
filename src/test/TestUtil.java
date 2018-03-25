@@ -25,9 +25,9 @@ public class TestUtil {
         }
 
         System.out.println(ad);
-        System.out.println(hashAdress(ad));
+        System.out.println(hashAddress(ad));
         System.out.println(hashFile("prova.pdf"));
-        System.out.println(keyPosition(hashAdress(ad)));
+        System.out.println(keyPosition(hashAddress(ad)));
         System.out.println(keyPosition(hashFile("prova.txt")));
         System.out.println("Test ithStart: " + testithStart());
         System.out.println("Test belongsToOpenInterval: " + testbelongsToOpenInterval());

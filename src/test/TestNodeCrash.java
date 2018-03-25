@@ -15,7 +15,7 @@ public class TestNodeCrash {
         InetSocketAddress n5Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 5000);
 
         InternalNode n5 = new InternalNode(n5Soc, "C:\\Users\\Marco\\Desktop\\Client2\\");
-        System.out.println("Position node5: " + Util.keyPosition(Util.hashAdress(n5Soc)) + " id: " + n5.getLocalId());
+        System.out.println("Position node5: " + Util.keyPosition(Util.hashAddress(n5Soc)) + " id: " + n5.getLocalId());
 
         InetSocketAddress n1Soc = new InetSocketAddress(InetAddress.getByName("localhost"), 4444);
         System.out.println(n5.join(n1Soc));
