@@ -8,12 +8,24 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- * Created by Marco on 04/03/2018.
+ * This class represents a thread that aims to stabilize the Chord ring after an unexpected instability (i.e. a
+ * node crashes). Each internal node has a Stabilizer thread which is started during the join procedure.
+ * In particular, it is responsible to check if the successor is not alive. If this situation happens, it updates the
+ * current node's finger table and sets the new successor's predecessor (i.e. the current node)
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class Stabilizer extends Thread {
 
     private InternalNode internalNode;
 
+    /**
+     * Unique constructor of the class
+     * @param n It is the internal node on which the thread runs
+     */
     public Stabilizer(InternalNode n) {
         internalNode = n;
     }
@@ -22,13 +34,10 @@ public class Stabilizer extends Thread {
     public void run() {
 
         while(true){
-
             InetSocketAddress succ = internalNode.getSuccAddress();
-//            if(succ == null){
-//                internalNode.getfTable().fillSuccessor(internalNode.getLocalAddress());
-//            }
-
             boolean isReachable = false;
+
+            //try to create a socket to successor
             try {
                 if(succ == null){
                     isReachable = false;
@@ -42,6 +51,8 @@ public class Stabilizer extends Thread {
                 isReachable = false;
             }
 
+            //if it is not reachable, delete it from the finger table then find the new one
+            //and contact it to set the current node as its new predecessor
             if(!isReachable){
                 internalNode.getfTable().deleteNode(succ);
                 internalNode.getfTable().fillSuccessor(internalNode);
@@ -51,16 +62,6 @@ public class Stabilizer extends Thread {
                 //notify
                 rc.setPredecessorRequest(internalNode.getLocalAddress());
             }
-
-
-//            InetSocketAddress predSucc = rc.addressRequest("GET_PRED");
-//
-//            //bad connection
-//            if(predSucc == null){
-//                continue;
-//            }
-
-
 
             try {
                 Thread.sleep(500);

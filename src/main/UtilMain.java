@@ -262,12 +262,12 @@ public class UtilMain {
             return;
         }
 
-        System.out.println("Node position: " + Util.keyPosition(Util.hashAdress(node.getPredAddress())) + "% address: " + node.getPredAddress());
+        System.out.println("Node position: " + Util.keyPosition(Util.hashAddress(node.getPredAddress())) + "% address: " + node.getPredAddress());
         RingConnection rc = new RingConnection(node.getPredAddress());
         InetSocketAddress temp = rc.addressRequest("GET_PRED");
 
         while(temp != null && !node.getLocalAddress().equals(temp)){
-            System.out.println("Node position: " + Util.keyPosition(Util.hashAdress(temp)) + "% address: " + temp);
+            System.out.println("Node position: " + Util.keyPosition(Util.hashAddress(temp)) + "% address: " + temp);
             rc = new RingConnection(temp);
             temp = rc.addressRequest("GET_PRED");
         }

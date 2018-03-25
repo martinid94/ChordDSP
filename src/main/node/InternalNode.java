@@ -51,7 +51,7 @@ public class InternalNode implements Node{
 
         localAddress = local;
         fTable = new FingerTable();
-        localId = Util.hashAdress(local);
+        localId = Util.hashAddress(local);
         joinAvailable = new AtomicBoolean(); //used as a flag to show if the node can sustain join operation
         predAddress = null;
         oldPred = null;
@@ -113,7 +113,7 @@ public class InternalNode implements Node{
         }
 
         //download files and communicate the replicas removal
-        new FileUpdater(mySucc, this, Util.hashAdress(myPred), Util.hashAdress(mySucc), true).start();
+        new FileUpdater(mySucc, this, Util.hashAddress(myPred), Util.hashAddress(mySucc), true).start();
 
         //start threads that monitor the ring
         checkPred.start();
@@ -232,13 +232,13 @@ public class InternalNode implements Node{
         }
 
         //until id does not belong to (n, succ] cycle
-        while(!Util.belongsToInterval(id, n, Util.hashAdress(succ))){
+        while(!Util.belongsToInterval(id, n, Util.hashAddress(succ))){
 
             if(n.equals(localId)){
                 //compute with local information the closest preceding node of id
                 nAddr = closestPrecedingNode(id);
                 //update n
-                n = Util.hashAdress(nAddr);
+                n = Util.hashAddress(nAddr);
                 RingConnection rc = new RingConnection(nAddr);
                 //update succ
                 succ = rc.addressRequest("GET_SUCC");
@@ -263,7 +263,7 @@ public class InternalNode implements Node{
                 }
 
                 nAddr = temp;
-                n = Util.hashAdress(nAddr);
+                n = Util.hashAddress(nAddr);
                 rc = new RingConnection(nAddr);
                 succ = rc.addressRequest("GET_SUCC");
 
@@ -291,7 +291,7 @@ public class InternalNode implements Node{
             }
 
             //if ith finger belongs to the interval (localId, id) it is a candidate
-            if(Util.belongsToOpenInterval(Util.hashAdress(ith), localId, id)){
+            if(Util.belongsToOpenInterval(Util.hashAddress(ith), localId, id)){
                 boolean value = false;
 
                 //check if the candidate is still active
@@ -590,8 +590,8 @@ public class InternalNode implements Node{
         }
         //if oldPred belongs to the interval (newPred localId) then start the FileUpdater
         //(i.e. the setPredecessor() method is called after a leave operation or a crash of the predecessor)
-        if(newPred != null && Util.belongsToOpenInterval(Util.hashAdress(oldPred), Util.hashAdress(newPred), localId)){
-            (new FileUpdater(newPred, this, Util.hashAdress(newPred), Util.hashAdress(oldPred), false)).start();
+        if(newPred != null && Util.belongsToOpenInterval(Util.hashAddress(oldPred), Util.hashAddress(newPred), localId)){
+            (new FileUpdater(newPred, this, Util.hashAddress(newPred), Util.hashAddress(oldPred), false)).start();
         }
         return true;
     }
@@ -611,8 +611,8 @@ public class InternalNode implements Node{
         }
         //if oldSucc belongs to the interval (localId newSucc) then start the FileUpdater
         //(i.e. the setSuccessor() method is called after a leave operation or a crash of the predecessor)
-        if(newSucc != null && Util.belongsToOpenInterval(Util.hashAdress(fTable.getOldSucc()), localId, Util.hashAdress(newSucc))){
-            (new FileUpdater(newSucc, this, Util.hashAdress(fTable.getOldSucc()), Util.hashAdress(newSucc), false)).start();
+        if(newSucc != null && Util.belongsToOpenInterval(Util.hashAddress(fTable.getOldSucc()), localId, Util.hashAddress(newSucc))){
+            (new FileUpdater(newSucc, this, Util.hashAddress(fTable.getOldSucc()), Util.hashAddress(newSucc), false)).start();
         }
         return true;
     }
