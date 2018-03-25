@@ -10,7 +10,14 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
- * Created by Marco on 24/02/2018.
+ * This class manages a request from outside the node.
+ * It reads and executes a specific request and it responds back the information needed.
+ * For example, this class executes operation on the node requested from outside that modifies the ring or download, upload, delete a specific file.
+ *
+ * @author Alfonso Marco
+ * @author Martini Davide
+ *
+ * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
 public class Executor implements Runnable{
 
@@ -19,6 +26,12 @@ public class Executor implements Runnable{
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
+    /**
+     * Unique constructor of the class
+     *
+     * @param s It is the socket from where the request is sent
+     * @param n It is the internal node on which is executed a specific request
+     */
     public Executor(Socket s, InternalNode n){
         if(s == null || n == null){
             throw new IllegalArgumentException();
@@ -38,12 +51,11 @@ public class Executor implements Runnable{
             return;
         }
 
-        String request = null;
+        String request;
         try {
             request = (String) ois.readObject();
 
             switch (request){
-                //RingConnection requests
                 case "FIND_SUCC":
                     findSuccessor();
                     break;
@@ -98,21 +110,22 @@ public class Executor implements Runnable{
 
             }
 
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            return;
         }
         finally {
             try
             {
-                ois.close();
-                oos.close();
-                sock.close();
+                if(ois != null)
+                    ois.close();
+                if(oos != null)
+                    oos.close();
+                if(sock != null)
+                    sock.close();
             }
             catch(IOException ioe2)
             {
-                //ioe2.printStackTrace();
+                ioe2.printStackTrace();
             }
         }
 
@@ -127,7 +140,7 @@ public class Executor implements Runnable{
             return;
         }
 
-        InetSocketAddress successor = internalNode.findSuccessor(id); //new InetSocketAddress(InetAddress.getByName("192.168.1.3"), 4544);
+        InetSocketAddress successor = internalNode.findSuccessor(id);
         oos.writeObject(successor);
         oos.flush();
     }
@@ -210,7 +223,7 @@ public class Executor implements Runnable{
         }
         //joinAvailable variable is set to false in the if condition: after changing predecessor,
         // no join is available since files must be updated
-        if(newPred == null){ // || !internalNode.getAndSetJoinAvailable(false)
+        if(newPred == null){
             //respond with false
             oos.writeObject(false);
             oos.flush();
