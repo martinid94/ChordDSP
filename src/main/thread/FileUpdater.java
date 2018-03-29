@@ -3,7 +3,7 @@ package main.thread;
 import main.connection.InternalFileConnection;
 import main.connection.RingConnection;
 import main.node.InternalNode;
-import main.Util;
+import main.util.Util;
 
 import java.math.BigInteger;
 import java.net.InetSocketAddress;

@@ -1,6 +1,6 @@
 package main.node;
 
-import main.Util;
+import main.util.Util;
 import main.connection.InternalFileConnection;
 import main.connection.RingConnection;
 import main.thread.*;

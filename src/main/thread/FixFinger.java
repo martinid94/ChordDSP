@@ -1,7 +1,7 @@
 package main.thread;
 
 import main.node.InternalNode;
-import main.Util;
+import main.util.Util;
 
 import java.net.InetSocketAddress;
 
