@@ -1,5 +1,6 @@
-package main;
+package main.demo;
 
+import main.util.Util;
 import main.connection.ExternalFileConnection;
 import main.connection.RingConnection;
 import main.node.ExternalNode;

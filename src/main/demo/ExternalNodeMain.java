@@ -1,4 +1,4 @@
-package main;
+package main.demo;
 
 import main.node.ExternalNode;
 
