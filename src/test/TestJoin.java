@@ -25,12 +25,12 @@ public class TestJoin {
         InternalNode n4 = new InternalNode(n4Soc, "C:\\Users\\Marco\\Desktop\\Ring\\n4\\");
         //InternalNode n5 = new InternalNode(n5Soc, "C:\\Users\\Marco\\Desktop\\Ring\\n5\\");
         InternalNode n6 = new InternalNode(n6Soc, "C:\\Users\\Marco\\Desktop\\Ring\\n6\\");
-        System.out.println("Position node1: " + Util.keyPosition(Util.hashAdress(n1Soc)) + " id: " + n1.getLocalId());
-        System.out.println("Position node2: " + Util.keyPosition(Util.hashAdress(n2Soc)) + " id: " + n2.getLocalId());
-        System.out.println("Position node3: " + Util.keyPosition(Util.hashAdress(n3Soc)) + " id: " + n3.getLocalId());
-        System.out.println("Position node4: " + Util.keyPosition(Util.hashAdress(n4Soc)) + " id: " + n4.getLocalId());
+        System.out.println("Position node1: " + Util.keyPosition(Util.hashAddress(n1Soc)) + " id: " + n1.getLocalId());
+        System.out.println("Position node2: " + Util.keyPosition(Util.hashAddress(n2Soc)) + " id: " + n2.getLocalId());
+        System.out.println("Position node3: " + Util.keyPosition(Util.hashAddress(n3Soc)) + " id: " + n3.getLocalId());
+        System.out.println("Position node4: " + Util.keyPosition(Util.hashAddress(n4Soc)) + " id: " + n4.getLocalId());
         //System.out.println("Position node5: " + Util.keyPosition(Util.hashAdress(n5Soc)) + " id: " + n5.getLocalId());
-        System.out.println("Position node6: " + Util.keyPosition(Util.hashAdress(n6Soc)) + " id: " + n6.getLocalId());
+        System.out.println("Position node6: " + Util.keyPosition(Util.hashAddress(n6Soc)) + " id: " + n6.getLocalId());
         n1.bootstrapJoin();
         System.out.println(n2.join(n1Soc));
         Thread.sleep(50);
