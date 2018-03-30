@@ -95,6 +95,9 @@ public class UtilMain {
             case "position":
                 System.out.println("Position in the ring: " + Util.keyPosition(node.getLocalId()) + "%");
                 break;
+            case "key":
+                System.out.println("Key of the node: " + node.getLocalId());
+                break;
             case "ring":
                 ring(node);
                 break;
@@ -282,6 +285,7 @@ public class UtilMain {
         System.out.println("myPredecessor                       get predecessor address");
         System.out.println("fingerTable                         get finger table");
         System.out.println("position                            get percent position of node address in the ring");
+        System.out.println("key                                 get id (key) of node in the ring");
         System.out.println("ring                                print the address of the nodes in the ring");
         System.out.println("fileList                            print all files stored in the node");
         System.out.println("exit                                close the application");
