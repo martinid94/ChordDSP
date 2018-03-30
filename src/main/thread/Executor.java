@@ -116,12 +116,16 @@ public class Executor implements Runnable{
         finally {
             try
             {
-                if(ois != null)
-                    ois.close();
-                if(oos != null)
-                    oos.close();
-                if(sock != null)
+                if(sock != null){
+                    if(ois != null && !sock.isClosed())
+                        ois.close();
+                    if(oos != null && !sock.isClosed()){
+                        oos.close();
+                    }
+
                     sock.close();
+                }
+
             }
             catch(IOException ioe2)
             {
