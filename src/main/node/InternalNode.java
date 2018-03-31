@@ -648,7 +648,7 @@ public class InternalNode implements Node{
     public String getFiles(){
         StringBuilder sb = new StringBuilder();
         for(String file : files.keySet()){
-            sb.append(file + "\n");
+            sb.append("key:" + Util.hashFile(file) + " fileName:" + file + "\n");
         }
         return sb.toString();
     }
