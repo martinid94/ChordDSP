@@ -1,7 +1,7 @@
 package test;
 
 import main.node.InternalNode;
-import main.Util;
+import main.util.Util;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

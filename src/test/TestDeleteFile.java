@@ -3,7 +3,7 @@ package test;
 import main.connection.ExternalFileConnection;
 import main.connection.RingConnection;
 import main.node.ExternalNode;
-import main.Util;
+import main.util.Util;
 
 import java.math.BigInteger;
 import java.net.InetAddress;

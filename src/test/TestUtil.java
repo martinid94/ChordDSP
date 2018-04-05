@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import static main.Util.*;
+import static main.util.Util.*;
 
 /**
  * Created by Marco on 24/02/2018.
