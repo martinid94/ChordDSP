@@ -66,7 +66,7 @@ public class UtilMain {
                 }
 
                 if(node.join(bootstrapAddress)){
-                    System.out.println("The node joins the ring successfully!\n" + "Position in the ring: " +
+                    System.out.println("\rThe node joins the ring successfully!\n" + "Position in the ring: " +
                             Util.keyPosition(node.getLocalId()) + "%");
                 }
                 else{
@@ -76,7 +76,7 @@ public class UtilMain {
                 break;
             case "leave":
                 if(node.leave()){
-                    System.out.println("The node leaves the ring successfully!");
+                    System.out.println("\rThe node leaves the ring successfully!");
                     System.exit(0);
                 }
                 else{
@@ -84,25 +84,25 @@ public class UtilMain {
                 }
                 break;
             case "mySuccessor":
-                System.out.println("Successor is: " + node.getSuccAddress());
+                System.out.println("\rSuccessor is: " + node.getSuccAddress());
                 break;
             case "myPredecessor":
-                System.out.println("Predecessor is: " + node.getPredAddress());
+                System.out.println("\rPredecessor is: " + node.getPredAddress());
                 break;
             case "fingerTable":
-                System.out.println("Finger table ------------------------------------\n" + node.getfTable().toString());
+                System.out.println("\rFinger table ------------------------------------\n" + node.getfTable().toString());
                 break;
             case "position":
-                System.out.println("Position in the ring: " + Util.keyPosition(node.getLocalId()) + "%");
+                System.out.println("\rPosition in the ring: " + Util.keyPosition(node.getLocalId()) + "%");
                 break;
             case "key":
-                System.out.println("Key of the node: " + node.getLocalId());
+                System.out.println("\rKey of the node: " + node.getLocalId());
                 break;
             case "ring":
                 ring(node);
                 break;
             case "fileList":
-                System.out.println("File stored in this node:");
+                System.out.println("\rFile stored in this node:");
                 System.out.println(node.getFiles());
                 break;
             case "help":
@@ -142,6 +142,9 @@ public class UtilMain {
                 break;
             case "hasFile":
                 manageFile(c, node, FileRequest.hasFile);
+                break;
+            case "exit":
+                System.exit(0);
                 break;
             case "help":
                 helpExternalNode();
@@ -226,34 +229,34 @@ public class UtilMain {
         switch (fileRequest){
             case insert:
                 if(efc.insertFileRequest(fileName)){
-                    System.out.println("File " + fileName + " uploaded successfully!");
+                    System.out.println("\rFile " + fileName + " uploaded successfully!");
                 }
                 else{
-                    System.out.println("Error! File " + fileName + " not uploaded!");
+                    System.out.println("\rError! File " + fileName + " not uploaded!");
                 }
                 break;
             case get:
                 if(efc.getFileRequest(fileName)){
-                    System.out.println("File" + fileName + " downloaded successfully!");
+                    System.out.println("\rFile" + fileName + " downloaded successfully!");
                 }
                 else{
-                    System.out.println("Error! File " + fileName + " not downloaded!");
+                    System.out.println("\rError! File " + fileName + " not downloaded!");
                 }
                 break;
             case delete:
                 if(efc.deleteFileRequest(fileName)){
-                    System.out.println("File" + fileName + " deleted successfully!");
+                    System.out.println("\rFile" + fileName + " deleted successfully!");
                 }
                 else{
-                    System.out.println("Error! File " + fileName + " not deleted!");
+                    System.out.println("\rError! File " + fileName + " not deleted!");
                 }
                 break;
             case hasFile:
                 if(efc.hasFileRequest(fileName)){
-                    System.out.println("File" + fileName + " is in the ring!");
+                    System.out.println("\rFile" + fileName + " is in the ring!");
                 }
                 else{
-                    System.out.println("File " + fileName + " is not in the ring!!");
+                    System.out.println("\rFile " + fileName + " is not in the ring!!");
                 }
                 break;
         }
@@ -261,24 +264,24 @@ public class UtilMain {
     }
 
     private static void ring(InternalNode node){
-        System.out.println("Node position: " + Util.keyPosition(node.getLocalId()) + "% address: " + node.getLocalAddress());
+        System.out.println("\rNode position: " + Util.keyPosition(node.getLocalId()) + "% address: " + node.getLocalAddress());
         if(node.getPredAddress() == null || node.getPredAddress().equals(node.getLocalAddress())){
             return;
         }
 
-        System.out.println("Node position: " + Util.keyPosition(Util.hashAddress(node.getPredAddress())) + "% address: " + node.getPredAddress());
+        System.out.println("\rNode position: " + Util.keyPosition(Util.hashAddress(node.getPredAddress())) + "% address: " + node.getPredAddress());
         RingConnection rc = new RingConnection(node.getPredAddress());
         InetSocketAddress temp = rc.addressRequest("GET_PRED");
 
         while(temp != null && !node.getLocalAddress().equals(temp)){
-            System.out.println("Node position: " + Util.keyPosition(Util.hashAddress(temp)) + "% address: " + temp);
+            System.out.println("\rNode position: " + Util.keyPosition(Util.hashAddress(temp)) + "% address: " + temp);
             rc = new RingConnection(temp);
             temp = rc.addressRequest("GET_PRED");
         }
     }
 
     private static void helpInternalNode(){
-        System.out.println("List of commands----------------------------");
+        System.out.println("\rList of commands----------------------------");
         System.out.println("join [ip address] [port]            join the ring network");
         System.out.println("leave                               leave the ring network");
         System.out.println("mySuccessor                         get successor address");
@@ -292,11 +295,12 @@ public class UtilMain {
     }
 
     private static void helpExternalNode(){
-        System.out.println("List of commands----------------------------");
+        System.out.println("\rList of commands----------------------------");
         System.out.println("insert  [fileName] [ip address] [port]       upload a file");
         System.out.println("get     [fileName] [ip address] [port]       download a file");
         System.out.println("delete  [fileName] [ip address] [port]       delete a file");
         System.out.println("hasFile [fileName] [ip address] [port]       search a file in the ring");
+        System.out.println("exit                                close the application");
     }
 
 

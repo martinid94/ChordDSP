@@ -29,14 +29,15 @@ public class RingMain {
         }
 
         Scanner sc = new Scanner(System.in);
+        System.out.print("Insert command: ");
 
-        while(true){
-            System.out.print("Insert command: ");
+        while(sc.hasNextLine()){
             String lineCommand = sc.nextLine();
-            if(lineCommand.equals("")){
-                continue;
+            if(!lineCommand.equals("")){
+                UtilMain.readExecInternalNodeCommand(lineCommand, n);
             }
-            UtilMain.readExecInternalNodeCommand(lineCommand, n);
+
+            System.out.print("Insert command: ");
         }
 
     }

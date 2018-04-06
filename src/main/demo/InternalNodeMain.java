@@ -21,14 +21,16 @@ public class InternalNodeMain {
         InetSocketAddress nodeAddress = UtilMain.verifyArgs(args);
         InternalNode n = new InternalNode(nodeAddress, args[2]);
         Scanner sc = new Scanner(System.in);
+        System.out.print("Insert command: ");
 
-        while(true){
-            System.out.print("Insert command: ");
+        while(sc.hasNextLine()){
+
             String lineCommand = sc.nextLine();
-            if(lineCommand.equals("")){
-                continue;
+            if(!lineCommand.equals("")){
+                UtilMain.readExecInternalNodeCommand(lineCommand, n);
             }
-            UtilMain.readExecInternalNodeCommand(lineCommand, n);
+
+            System.out.print("Insert command: ");
         }
 
     }

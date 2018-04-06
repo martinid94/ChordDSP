@@ -26,14 +26,15 @@ public class ExternalNodeMain {
         ExternalNode node = new ExternalNode(args[0]);
 
         Scanner sc = new Scanner(System.in);
+        System.out.print("Insert command: ");
 
-        while(true){
-            System.out.print("Insert command: ");
+        while(sc.hasNextLine()){
             String lineCommand = sc.nextLine();
-            if(lineCommand.equals("")){
-                continue;
+            if(!lineCommand.equals("")){
+                UtilMain.readExecExternalNodeCommand(lineCommand, node);
             }
-            UtilMain.readExecExternalNodeCommand(lineCommand, node);
+
+            System.out.print("Insert command: ");
         }
     }
 }
