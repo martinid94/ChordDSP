@@ -49,7 +49,7 @@ public class UtilMain {
         switch (command){
             case "join":
                 if(param == null || !c.hasNext()){
-                    System.out.println("You must insert ip address and port of a bootstrap node!");
+                    System.out.println("\rYou must insert ip address and port of a bootstrap node!");
                     break;
                 }
 
@@ -58,10 +58,10 @@ public class UtilMain {
                 try {
                     bootstrapAddress = new InetSocketAddress(InetAddress.getByName(param), Integer.parseInt(c.next()));
                 }catch (UnknownHostException e) {
-                    System.out.println("You must insert the correct ip address (or host name)!");
+                    System.out.println("\rYou must insert the correct ip address (or host name)!");
                     break;
                 }catch (NumberFormatException nfe){
-                    System.err.println("You must insert a correct port number!");
+                    System.err.println("\rYou must insert a correct port number!");
                     break;
                 }
 
@@ -70,7 +70,7 @@ public class UtilMain {
                             Util.keyPosition(node.getLocalId()) + "%");
                 }
                 else{
-                    System.out.println("Error! The node doesn't join the ring!");
+                    System.out.println("\rError! The node doesn't join the ring!");
                 }
 
                 break;
@@ -80,7 +80,7 @@ public class UtilMain {
                     System.exit(0);
                 }
                 else{
-                    System.out.println("Error! The node doesn't leave the ring!");
+                    System.out.println("\rError! The node doesn't leave the ring!");
                 }
                 break;
             case "mySuccessor":
@@ -112,7 +112,7 @@ public class UtilMain {
                 System.exit(0);
                 break;
             default:
-                System.out.println("You must insert a correct command!");
+                System.out.println("\rYou must insert a correct command!");
                 helpInternalNode();
                 break;
         }
@@ -150,7 +150,7 @@ public class UtilMain {
                 helpExternalNode();
                 break;
             default:
-                System.out.println("You must insert a correct command!");
+                System.out.println("\rYou must insert a correct command!");
                 helpExternalNode();
                 break;
         }
@@ -164,7 +164,7 @@ public class UtilMain {
      */
     public static InetSocketAddress verifyArgs(String[] args){
         if(args.length != 3){
-            System.err.println("Error! You must insert the correct arguments: ip address (or host name), port number and file path.\n" +
+            System.err.println("\rError! You must insert the correct arguments: ip address (or host name), port number and file path.\n" +
                     "Example: InternalNodeMain 192.168.1.14 4444 C:\\Users\\NomeUtente\\Files");
             System.exit(1);
         }
@@ -174,10 +174,10 @@ public class UtilMain {
         try {
             nodeAddress = new InetSocketAddress(InetAddress.getByName(args[0]), Integer.parseInt(args[1]));
         }catch (UnknownHostException e) {
-            System.err.println("You must insert the correct ip address (or host name)!");
+            System.err.println("\rYou must insert the correct ip address (or host name)!");
             System.exit(1);
         }catch (NumberFormatException nfe){
-            System.err.println("You must insert a correct port number!");
+            System.err.println("\rYou must insert a correct port number!");
             System.exit(1);
         }
 
@@ -194,7 +194,7 @@ public class UtilMain {
             fileName = c.next();
         }
         else{
-            System.out.println("You must insert the name of file!");
+            System.out.println("\rYou must insert the name of file!");
             return;
         }
 
@@ -204,12 +204,12 @@ public class UtilMain {
                 port = c.nextInt();
             }
             else{
-                System.out.println("You must insert a port number of the node!");
+                System.out.println("\rYou must insert a port number of the node!");
                 return;
             }
         }
         else{
-            System.out.println("You must insert an address of the node!");
+            System.out.println("\rYou must insert an address of the node!");
             return;
         }
 
@@ -218,7 +218,7 @@ public class UtilMain {
         try {
             contact = new InetSocketAddress(InetAddress.getByName(address), port);
         } catch (UnknownHostException e) {
-            System.out.println("You must insert a valid address (or host name) of the node!");
+            System.out.println("\rYou must insert a valid address (or host name) of the node!");
             return;
         }
 
