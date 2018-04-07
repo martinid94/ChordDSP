@@ -1,0 +1,5 @@
+insert design.pdf localhost 4444
+insert ER-model.pdf localhost 4444
+insert history.pdf localhost 4444
+insert introduction.pdf localhost 4444
+insert organisation.pdf localhost 4444
