@@ -10,4 +10,6 @@ elif [ "$1" = "N2" ]; then
 	gnome-terminal -e "sh script/nodeN2.sh"
 elif [ "$1" = "N1" ]; then
 	gnome-terminal -e "sh script/nodeN1.sh"
+elif [ "$1" = "external" ]; then
+	gnome-terminal -e "sh script/externalNode.sh"
 fi

@@ -1,5 +1,8 @@
 #!/bin/bash/
 
+if [ -d "ring/N1" ]; then
+	rm -r ring/N1
+fi
 mkdir ring/N1
 cd out
 echo "nodo N1"

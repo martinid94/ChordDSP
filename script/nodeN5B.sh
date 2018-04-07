@@ -1,9 +1,8 @@
 #!/bin/bash/
 
 if [ -d "ring" ]; then
-	rm -r ring
+		rm -r ring
 fi
-
 mkdir ring
 mkdir ring/N5
 cd out
