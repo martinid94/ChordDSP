@@ -237,7 +237,7 @@ public class UtilMain {
                 break;
             case get:
                 if(efc.getFileRequest(fileName)){
-                    System.out.println("\rFile" + fileName + " downloaded successfully!");
+                    System.out.println("\rFile " + fileName + " downloaded successfully!");
                 }
                 else{
                     System.out.println("\rError! File " + fileName + " not downloaded!");

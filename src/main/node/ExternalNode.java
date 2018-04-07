@@ -32,7 +32,6 @@ public class ExternalNode implements Node {
         if(s == null || fileName == null || fileName.equals("")){
             return false;
         }
-
         FileManager fm = new FileManager(path + fileName);
         return fm.write(s);
     }
@@ -49,6 +48,10 @@ public class ExternalNode implements Node {
         }
 
         FileManager fm = new FileManager(path + fileName);
+
+        if(!fm.exists()){
+            return false;
+        }
         return fm.read(s);
     }
 
