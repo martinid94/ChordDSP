@@ -29,7 +29,6 @@ public class TestDeleteFile {
         ExternalNode mySelf = new ExternalNode(pathFile);
         ExternalFileConnection efc = new ExternalFileConnection(mySelf, n);
 
-        //efc.getFileRequest(pathFile); efc.insertFileRequest(fileName)
         System.out.println("Return value: " + efc.deleteFileRequest(fileName));
 
     }

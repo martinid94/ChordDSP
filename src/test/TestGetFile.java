@@ -29,7 +29,6 @@ public class TestGetFile {
         ExternalNode mySelf = new ExternalNode(pathFile);
         ExternalFileConnection efc = new ExternalFileConnection(mySelf, n);
 
-        //efc.getFileRequest(pathFile); efc.insertFileRequest(fileName)
         System.out.println("Return value: " + efc.getFileRequest(fileName));
 
     }
