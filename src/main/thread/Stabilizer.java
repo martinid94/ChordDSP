@@ -14,7 +14,7 @@ import java.net.Socket;
  * current node's finger table and sets the new successor's predecessor (i.e. the current node)
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */

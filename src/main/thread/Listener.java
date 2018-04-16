@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
  * When a connection and so a request are performed, the class Listener passes the request to a different thread (that executes the request) and then it keeps listening again on the same port.
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */

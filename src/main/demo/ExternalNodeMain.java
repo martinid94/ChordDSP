@@ -9,7 +9,7 @@ import java.util.Scanner;
  * It implements an interactive command line in order to execute task in the external node e connection with the ring.
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */

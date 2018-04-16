@@ -12,7 +12,7 @@ import java.net.Socket;
  * the join procedure and repeats its operation after a small timeout.
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */

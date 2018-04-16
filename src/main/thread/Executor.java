@@ -15,7 +15,7 @@ import java.net.Socket;
  * For example, this class executes operation on the node requested from outside that modifies the ring or download, upload, delete a specific file.
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */

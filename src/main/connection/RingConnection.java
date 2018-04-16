@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
  * This class provides all the methods that internal nodes (those who belong to the Chord ring) call in order to
  * request information on the Chord ring structure.
  *
- * @author Alfonso Marco
+ *
  * @author Martini Davide
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.

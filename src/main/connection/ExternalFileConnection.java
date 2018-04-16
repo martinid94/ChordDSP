@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
  * This class provides all the methods that an external node (a host external form the Chord ring) may call in order to
  * download, upload or delete a file stored in the Chord ring.
  *
- * @author Alfonso Marco
+ *
  * @author Martini Davide
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.

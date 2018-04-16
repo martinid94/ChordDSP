@@ -9,7 +9,7 @@ import java.net.Socket;
 /**
  * This class provides the basic methods to start and close a connection with a specified host
  *
- * @author Alfonso Marco
+ *
  * @author Martini Davide
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.

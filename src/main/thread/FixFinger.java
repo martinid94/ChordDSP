@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
  * In particular this class provides a simple and effective way to refresh finger table entries (one entry is updated every 100 milliseconds).
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */

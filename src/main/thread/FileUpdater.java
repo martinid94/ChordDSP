@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * and delete file replicas in order to keep consistency in the Chord ring
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */

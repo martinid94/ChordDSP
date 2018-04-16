@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * This class provides all the methods that an node belonging to the Chord ring may call in order to
  * download, upload and delete one or more files stored in the Chord ring.
  *
- * @author Alfonso Marco
+ *
  * @author Martini Davide
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.

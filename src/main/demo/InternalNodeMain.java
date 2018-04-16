@@ -10,7 +10,7 @@ import java.util.Scanner;
  * It implements an interactive command line in order to execute task in the internal node.
  *
  * @author Alfonso Marco
- * @author Martini Davide
+ *
  *
  * Distributed Systems class (AY 2017/2018), University of Padua, Master's degree in Computer Engineering.
  */
